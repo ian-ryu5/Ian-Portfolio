@@ -205,9 +205,6 @@ p.card-desc{color:var(--muted); font-size:15px; margin:0 0 20px; max-width:64ch;
 .exp-item{display:grid; grid-template-columns:200px 1fr; gap:20px;}
 .exp-meta{font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:var(--muted);}
 .exp-role{font-weight:600; color:var(--ink); font-family:'IBM Plex Sans', sans-serif; font-size:15px; margin-top:4px;}
-.exp-desc{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px;}
-.exp-desc li{position:relative; padding-left:16px; font-size:14.5px; line-height:1.55; color:var(--ink);}
-.exp-desc li::before{content:"•"; position:absolute; left:0; color:var(--amber);}
 .exp-body p{margin:0 0 6px; color:var(--muted); font-size:14.5px; max-width:62ch;}
 @media (max-width:700px){ .exp-item{grid-template-columns:1fr;} }
 
@@ -267,6 +264,11 @@ p.card-desc{color:var(--muted); font-size:15px; margin:0 0 20px; max-width:64ch;
 }
 .contact-row a:hover{border-color:var(--ink);}
 footer{padding:32px 0 56px; font-size:12.5px; color:var(--muted);}
+.site-footer{
+  display:flex; justify-content:space-between; align-items:center;
+  gap:16px; flex-wrap:wrap;
+  border-top:1px solid var(--line); padding-top:22px;
+}
 
 .to-top{
   position:fixed; right:22px; bottom:22px; z-index:15;
@@ -307,18 +309,6 @@ p.detail-lede{font-size:17px; color:var(--muted); max-width:70ch; margin:0;}
 .about-hero-photo{margin:0; background:var(--ink); padding:10px 10px 0; transform:rotate(1.5deg); box-shadow:12px 12px 0 var(--amber);}
 .about-hero-photo img{display:block; width:100%; aspect-ratio:4 / 3; object-fit:cover; filter:saturate(.9);}
 .about-hero-photo{padding-bottom:10px; max-width:430px; justify-self:end;}
-
-.protected-photo{position:relative;}
-.protected-photo img{
-  -webkit-user-drag:none; user-drag:none;
-  -webkit-touch-callout:none;
-  user-select:none; -webkit-user-select:none;
-  pointer-events:none;
-}
-.protected-photo-shield{
-  position:absolute; inset:0; z-index:2;
-  background:transparent;
-}
 
 .project-summary{
   display:grid; grid-template-columns:repeat(3, 1fr); gap:1px;
