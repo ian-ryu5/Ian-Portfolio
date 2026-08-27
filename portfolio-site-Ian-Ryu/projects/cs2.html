@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="../auth-guard.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predicting professional CS2 match results — Ian Ryu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="nav-inner">
+    <a class="mark" href="../index.html#top"><span class="mark-dot"></span> Ian Ryu</a>
+    <nav class="links">
+      <a href="../index.html#projects">Projects</a>
+      <a href="../about.html">About</a>
+    </nav>
+    <div class="social-links" aria-label="Social links">
+      <a href="mailto:ianryu@outlook.com" aria-label="Email" title="Email"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></a>
+      <a href="https://github.com/ian-ryu5" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.744.084-.729.084-.729 1.205.084 1.838 1.237 1.838 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.775.42-1.305.763-1.605-2.665-.303-5.467-1.334-5.467-5.93 0-1.31.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+      <a href="https://linkedin.com/in/ianryu1" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap project-page" id="top">
+
+  <section class="detail-hero">
+    <a class="breadcrumb" href="../index.html#projects">← Back to all projects</a>
+    <div class="tag-row" style="margin-top:22px;">
+      <span class="tag-domain">Esports analytics / classification</span>
+    </div>
+    <h1 class="detail-title">Predicting Professional CS2 Match Results</h1>
+    <p class="detail-role">UMass Amherst INFO 248: Intro To Data Science — Co-Authored With Griffin DesRoches</p>
+    <p class="detail-dates mono">November – December 2025</p>
+    <p class="detail-lede">A statistical study of what actually predicts a professional Counter-Strike 2 match outcome — and an honest look at how little of it turned out to be individually significant.</p>
+  </section>
+
+  <section class="detail-section" style="border-top:0; padding-top:18px;">
+    <div class="lede-block cs2-lede">
+      <p>Griffin and I both played competitive shooters and were curious whether team-level statistics — the kind broadcast overlays and HLTV stat pages show — actually carry predictive signal, or whether match outcomes are driven more by round-level execution that never shows up in a boxscore. Griffin led the HLTV scraping and data collection; I led the statistical modeling, the class-imbalance investigation, and the write-up.</p>
+      <p style="margin-bottom:0;">The most useful part of this project wasn't the model — it was catching, before we trusted any result, that the dataset's "team1 wins ~62% of the time" split was a scraping artifact rather than a real skill signal. That single check changed how we had to evaluate everything downstream.</p>
+    </div>
+  </section>
+
+  <section class="detail-section">
+    <h2 class="detail-heading">Data</h2>
+    <p>8,226 cleaned professional match observations from the supplied HLTV.org CSV (the original file contains 75 columns; data collection was led by Griffin DesRoches and released publicly under CC0). Every engineered feature is a <strong>rolling 5-game team differential</strong> — team1's recent form minus team2's recent form — computed before the match being predicted.</p>
+    <table class="data-table">
+      <thead><tr><th>Variable</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="num">diff_roll5_adr</td><td>Avg. damage per round, team1 minus team2, past 5 games</td></tr>
+        <tr><td class="num">diff_roll5_assists</td><td>Avg. assists, team1 minus team2, past 5 games</td></tr>
+        <tr><td class="num">diff_roll5_clutches_won</td><td>Avg. clutches won, team1 minus team2, past 5 games</td></tr>
+        <tr><td class="num">diff_roll5_deaths</td><td>Avg. deaths, team1 minus team2, past 5 games</td></tr>
+        <tr><td class="num">diff_roll5_kast_pct</td><td>Avg. KAST%, team1 minus team2, past 5 games</td></tr>
+        <tr><td class="num">diff_roll5_kills</td><td>Avg. kills, team1 minus team2, past 5 games</td></tr>
+        <tr><td class="num">diff_roll5_multi_kill_rounds</td><td>Avg. multikill rounds, team1 minus team2, past 5 games</td></tr>
+        <tr><td class="num">diff_roll5_opening_deaths</td><td>Avg. opening deaths, team1 minus team2, past 5 games</td></tr>
+        <tr><td class="num">diff_roll5_opening_kills</td><td>Avg. opening kills, team1 minus team2, past 5 games</td></tr>
+        <tr><td class="num">diff_roll5_rating_3</td><td>Avg. rating of each team's highest-rated player, past 5 games</td></tr>
+        <tr><td class="num">diff_roll5_swing_pct</td><td>Avg. swing% (share of round-deciding plays), past 5 games</td></tr>
+      </tbody>
+    </table>
+    <p>Rows with missing values or without 5 prior games of history for either team were dropped — 3,034 rows, taking the modeling set from 11,260 down to <strong>8,226 matches</strong>.</p>
+
+    <div class="raw-data-head">
+      <div>
+        <p class="callout-title">Raw data preview</p>
+        <p style="margin-bottom:0;">These are the first eight rows exactly as recorded in the supplied CSV. You can <a class="link" href="code/newest_ts_ds.csv" download>download the full 8,226-row file</a>.</p>
+      </div>
+    </div>
+    <div class="table-scroll">
+      <table class="data-table raw-data-table">
+        <thead><tr><th>Date</th><th>Event</th><th>Team 1</th><th>Team 2</th><th class="num">Score</th><th>Winner</th></tr></thead>
+        <tbody>
+          <tr><td class="num">2025-10-16T05:45:00Z</td><td>CS Asia Championships 2025</td><td>fut</td><td>faze</td><td class="num">2–1</td><td>team1</td></tr>
+          <tr><td class="num">2025-10-16T02:00:00Z</td><td>CS Asia Championships 2025</td><td>fnatic</td><td>heroic</td><td class="num">1–2</td><td>team2</td></tr>
+          <tr><td class="num">2025-10-16T02:30:00Z</td><td>CS Asia Championships 2025</td><td>liquid</td><td>legacy</td><td class="num">2–1</td><td>team1</td></tr>
+          <tr><td class="num">2025-10-15T23:00:00Z</td><td>CS Asia Championships 2025</td><td>faze</td><td>tyloo</td><td class="num">2–1</td><td>team1</td></tr>
+          <tr><td class="num">2025-10-15T23:05:00Z</td><td>CS Asia Championships 2025</td><td>pain</td><td>fut</td><td class="num">0–2</td><td>team2</td></tr>
+          <tr><td class="num">2025-10-15T06:50:00Z</td><td>CS Asia Championships 2025</td><td>lynn-vision</td><td>3dmax</td><td class="num">0–2</td><td>team2</td></tr>
+          <tr><td class="num">2025-10-15T05:00:00Z</td><td>CS Asia Championships 2025</td><td>virtuspro</td><td>mibr</td><td class="num">2–0</td><td>team1</td></tr>
+          <tr><td class="num">2025-10-15T03:40:00Z</td><td>CS Asia Championships 2025</td><td>fnatic</td><td>tyloo</td><td class="num">2–0</td><td>team1</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <p class="callout-title">A data-quality catch worth flagging</p>
+      <p style="margin-bottom:0;">The outcome variable turned out to be skewed: team1 won about 62% of matches in the dataset versus 38% for team2. HLTV doesn't assign "team1" by ranking or alphabetically, so this wasn't a real skill signal — it was an artifact of how matches happened to be logged during scraping. It mattered a lot for evaluation (see below), and catching it before modeling rather than after was one of the more useful steps in this project.</p>
+    </div>
+  </section>
+
+  <section class="detail-section">
+    <h2 class="detail-heading">Analysis Visuals</h2>
+    <p>These visuals show the progression from feature exploration to model evaluation. They provide context for both the data-quality issue and the final result.</p>
+
+    <figure class="fig">
+      <img src="images/cs2/feature-distributions-real.svg" alt="Actual histograms of rolling rating and swing percentage differences from 8,226 cleaned CS2 matches." loading="lazy">
+      <figcaption class="fig-caption">Actual feature distributions from the supplied CSV — rating difference SD 0.122; swing percentage difference SD 1.425.</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <img src="images/cs2/outcome-balance-real.svg" alt="Actual bar chart showing 5,115 team one wins and 3,111 team two wins in the supplied dataset." loading="lazy">
+      <figcaption class="fig-caption">Actual outcome check — team1 won 5,115 matches (62.18%) and team2 won 3,111 (37.82%).</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <img src="images/cs2/confusion-matrix.svg" alt="Confusion matrix for the CS2 logistic regression model, showing 160 true losses, 535 false wins, 219 false losses, and 1,143 true wins." loading="lazy">
+      <figcaption class="fig-caption">Evaluation output — the confusion matrix makes the model's majority-class behavior visible alongside its 63.3% accuracy.</figcaption>
+    </figure>
+  </section>
+
+  <section class="detail-section">
+    <h2 class="detail-heading">Model 1: Logistic Regression</h2>
+    <p>A chronological 75/25 split — trained on the older 75% of matches, tested on the most recent 25% — since the rolling features make rows non-independent and a random split would leak future form into training.</p>
+    <table class="data-table">
+      <thead><tr><th>Coefficient</th><th class="num">Estimate</th><th class="num">Std. error</th><th class="num">z value</th><th class="num">Pr(&gt;|z|)</th></tr></thead>
+      <tbody>
+        <tr><td>(Intercept)</td><td class="num">0.436</td><td class="num">0.026</td><td class="num">16.49</td><td class="num">&lt;2e-16 ***</td></tr>
+        <tr><td>diff_roll5_adr</td><td class="num">-0.019</td><td class="num">0.021</td><td class="num">-0.94</td><td class="num">0.347</td></tr>
+        <tr><td>diff_roll5_assists</td><td class="num">0.006</td><td class="num">0.005</td><td class="num">1.23</td><td class="num">0.219</td></tr>
+        <tr><td>diff_roll5_clutches_won</td><td class="num">-0.005</td><td class="num">0.027</td><td class="num">-0.17</td><td class="num">0.867</td></tr>
+        <tr><td>diff_roll5_deaths</td><td class="num">-0.024</td><td class="num">0.005</td><td class="num">-4.94</td><td class="num">7.9e-07 ***</td></tr>
+        <tr><td>diff_roll5_kast_pct</td><td class="num">0.014</td><td class="num">0.015</td><td class="num">0.94</td><td class="num">0.347</td></tr>
+        <tr><td>diff_roll5_kills</td><td class="num">0.006</td><td class="num">0.008</td><td class="num">0.74</td><td class="num">0.458</td></tr>
+        <tr><td>diff_roll5_multi_kill_rounds</td><td class="num">-0.009</td><td class="num">0.014</td><td class="num">-0.68</td><td class="num">0.496</td></tr>
+        <tr><td>diff_roll5_opening_deaths</td><td class="num">0.075</td><td class="num">0.032</td><td class="num">2.34</td><td class="num">0.019 *</td></tr>
+        <tr><td>diff_roll5_opening_kills</td><td class="num">0.063</td><td class="num">0.032</td><td class="num">2.00</td><td class="num">0.046 *</td></tr>
+        <tr><td>diff_roll5_rating_3</td><td class="num">0.061</td><td class="num">1.558</td><td class="num">0.04</td><td class="num">0.969</td></tr>
+        <tr><td>diff_roll5_swing_pct</td><td class="num">0.012</td><td class="num">0.089</td><td class="num">0.14</td><td class="num">0.892</td></tr>
+      </tbody>
+    </table>
+    <p>Only 3 of the 11 engineered features reached significance: <strong>deaths</strong> (more deaths than your opponent over the past 5 games hurts win probability, unsurprisingly), and — more interesting — <strong>opening kills and opening deaths</strong>, both <em>positively</em> associated with winning. Read alongside the swing% definition, this suggests CS2 rewards teams whose players actively engage in opening duels, win or lose, over teams that play passively. Winning or losing the opening duel matters less than being willing to take it.</p>
+  </section>
+
+  <section class="detail-section">
+    <h2 class="detail-heading">Evaluation, And Where It Fell Short</h2>
+    <table class="data-table">
+      <thead><tr><th></th><th class="num">Predicted Lose</th><th class="num">Predicted Win</th></tr></thead>
+      <tbody>
+        <tr><td>Actual Lose</td><td class="num">160</td><td class="num">535</td></tr>
+        <tr><td>Actual Win</td><td class="num">219</td><td class="num">1,143</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">
+      <p class="callout-title">The model did not beat the naive baseline</p>
+      <p>Test accuracy came out to <strong>63.3%</strong> — but the No Information Rate (the accuracy from just always guessing "team1 wins," the majority class) was <strong>66.2%</strong>. The formal test for whether accuracy beats that baseline (<code>P-Value [Acc &gt; NIR]</code>) returned <strong>0.997</strong> — nowhere close to significant, and numerically the model landed slightly below the dumb baseline. Balanced accuracy was 0.535 and Cohen's Kappa was 0.078, both barely above chance.</p>
+      <p style="margin-bottom:0;">This lines up with the coefficient table above: 8 of 11 features weren't individually significant, so it's not surprising the combined model struggled to add much over the base rate. The honest read is that team-level rolling averages capture only a thin slice of what decides a CS2 match — round-level tactical execution, individual form on the day, and momentum within a match aren't visible to stats aggregated 5 games back. High sensitivity (0.839) paired with low specificity (0.230) shows the model mostly learned to lean on the majority class rather than genuinely discriminate between outcomes.</p>
+    </div>
+    <p>This was Model 1 of three planned comparisons — Random Forest and boosted-tree classifiers followed the same evaluation approach, benchmarked against the same NIR baseline, and (per the fuller write-up) performed better. Those pages weren't available when this site was built; happy to add them if useful.</p>
+  </section>
+
+  <section class="detail-section">
+    <h2 class="detail-heading">Why Report A Model That Lost To The Baseline</h2>
+    <p>It would have been easy to lead with the Random Forest or boosted-tree numbers and bury this page. I'm putting the logistic regression result front and center instead, because the negative result is the more informative one: it rules out a whole class of simple, team-averaged features as the explanation for match outcomes, and it's the kind of finding a stats-literate reviewer (a hiring manager or professor) can actually check against the confusion matrix and NIR test above. A model that "performed better" without that context is a lot less convincing than one whose failure mode is fully shown.</p>
+  </section>
+
+  <section class="detail-section">
+    <h2 class="detail-heading">Stack</h2>
+    <div class="tech-row">
+      <span class="tech-tag">R</span><span class="tech-tag">Logistic Regression</span>
+      <span class="tech-tag">Random Forest</span><span class="tech-tag">Boosted Trees</span>
+      <span class="tech-tag">HLTV / Kaggle data</span>
+    </div>
+  </section>
+
+  <section class="detail-section" style="border-top:1px solid var(--line); padding-top:40px;">
+    <p style="font-size:13px; color:var(--muted);">Both are available to download: the <a class="link" href="code/INFO248-project-Desroches-Ryu.Rmd" download>original R Markdown</a> holds the source analysis, and the <a class="link" href="code/cs2_match_prediction.R" download>reference R pipeline</a> is a compact standalone version of it.</p>
+    <div class="detail-footer-actions">
+      <a class="btn btn-primary" href="../index.html#projects">← Return Home</a>
+    </div>
+  </section>
+
+</div>
+
+<footer></footer>
+
+<a class="to-top mono" href="#top" id="toTop" aria-label="Back to top">↑</a>
+<script>
+  var toTop = document.getElementById('toTop');
+  window.addEventListener('scroll', function(){
+    if (window.scrollY > 500) { toTop.classList.add('visible'); }
+    else { toTop.classList.remove('visible'); }
+  });
+
+  requestAnimationFrame(function(){ document.body.classList.add('page-loaded'); });
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reducedMotion) {
+    document.addEventListener('click', function(e){
+      var a = e.target.closest('a');
+      if (!a) return;
+      var href = a.getAttribute('href');
+      if (!href || href.charAt(0) === '#' || a.target === '_blank' || href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0 || e.metaKey || e.ctrlKey) return;
+      e.preventDefault();
+      document.body.classList.remove('page-loaded');
+      setTimeout(function(){ window.location.href = href; }, 300);
+    });
+  }
+</script>
+
+</body>
+</html>

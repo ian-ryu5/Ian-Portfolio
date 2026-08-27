@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 440" role="img" aria-labelledby="title desc">
+  <title id="title">CS2 match outcome distribution</title>
+  <desc id="desc">Bar chart showing team one won approximately 62 percent of matches and team two won approximately 38 percent.</desc>
+  <rect width="900" height="440" fill="#FBFCF9"/>
+  <g font-family="IBM Plex Sans, Arial, sans-serif" fill="#171B1A"><text x="55" y="50" font-size="24" font-weight="600">Outcome Distribution</text><text x="55" y="77" font-size="14" fill="#5B6058">The scraped data contained an unexpected team-label imbalance</text></g>
+  <g stroke="#DBDDD4" stroke-width="1"><path d="M150 110v230M150 340h650"/><path d="M150 225h650"/></g>
+  <g font-family="IBM Plex Mono, monospace" font-size="12" fill="#5B6058"><text x="135" y="360">0%</text><text x="300" y="360">25%</text><text x="465" y="360">50%</text><text x="630" y="360">75%</text><text x="790" y="360">100%</text><text x="55" y="185" fill="#171B1A">Team 1 win</text><text x="55" y="275" fill="#171B1A">Team 2 win</text></g>
+  <rect x="150" y="145" width="409" height="48" rx="3" fill="#E2A33B"/><rect x="150" y="235" width="251" height="48" rx="3" fill="#3E7C74"/>
+  <g font-family="IBM Plex Mono, monospace" font-size="15" fill="#171B1A"><text x="575" y="175">≈62%</text><text x="417" y="265">≈38%</text></g>
+  <text x="55" y="410" font-family="IBM Plex Sans, Arial, sans-serif" font-size="14" fill="#6B4507">This was treated as a logging artifact, not a real team-strength signal.</text>
+</svg>

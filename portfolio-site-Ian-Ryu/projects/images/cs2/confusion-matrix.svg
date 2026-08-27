@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" role="img" aria-labelledby="t d">
+  <title id="t">CS2 logistic regression confusion matrix</title>
+  <desc id="d">Confusion matrix with 160 true losses, 535 false wins, 219 false losses, and 1,143 true wins.</desc>
+  <rect width="900" height="480" fill="#FBFCF9"/>
+  <text x="36" y="46" font-family="Space Grotesk, Arial, sans-serif" font-size="24" font-weight="600" fill="#171B1A">Model Evaluation</text>
+  <text x="36" y="72" font-family="IBM Plex Sans, Arial, sans-serif" font-size="13.5" fill="#5B6058">Logistic regression confusion matrix on the held-out test set</text>
+  <text x="483" y="108" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="12.5" fill="#5B6058" text-anchor="middle">PREDICTED OUTCOME</text>
+  <text x="375.5" y="134" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="13.5" fill="#171B1A" text-anchor="middle">Lose</text>
+  <text x="590.5" y="134" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="13.5" fill="#171B1A" text-anchor="middle">Win</text>
+  <text x="172" y="258" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="12.5" fill="#5B6058" text-anchor="middle" transform="rotate(-90 172 258)">ACTUAL OUTCOME</text>
+  <text x="246" y="209.0" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="13.5" fill="#171B1A" text-anchor="end">Lose</text>
+  <rect x="268" y="150" width="212" height="105" fill="#B8CFCB"/>
+  <text x="375.5" y="217.0" font-family="Space Grotesk, Arial, sans-serif" font-size="36" font-weight="600" fill="#171B1A" text-anchor="middle">160</text>
+  <rect x="483" y="150" width="212" height="105" fill="#F0DCB4"/>
+  <text x="590.5" y="217.0" font-family="Space Grotesk, Arial, sans-serif" font-size="36" font-weight="600" fill="#171B1A" text-anchor="middle">535</text>
+  <text x="246" y="317.0" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="13.5" fill="#171B1A" text-anchor="end">Win</text>
+  <rect x="268" y="258" width="212" height="105" fill="#F0DCB4"/>
+  <text x="375.5" y="325.0" font-family="Space Grotesk, Arial, sans-serif" font-size="36" font-weight="600" fill="#171B1A" text-anchor="middle">219</text>
+  <rect x="483" y="258" width="212" height="105" fill="#B8CFCB"/>
+  <text x="590.5" y="325.0" font-family="Space Grotesk, Arial, sans-serif" font-size="36" font-weight="600" fill="#171B1A" text-anchor="middle">1,143</text>
+  <text x="268" y="410" font-family="IBM Plex Sans, Arial, sans-serif" font-size="13.5" fill="#5B6058">Accuracy 63.3%  ·  naive majority baseline 66.2%</text>
+  <text x="36" y="454" font-family="IBM Plex Sans, Arial, sans-serif" font-size="13" fill="#6B4507">The model landed below the baseline — it leaned heavily toward predicting a Team 1 win rather than discriminating between outcomes.</text>
+</svg>

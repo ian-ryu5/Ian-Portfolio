@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Private site — enter password</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F6F1; --paper-raised:#FBFCF9; --ink:#171B1A; --muted:#5B6058;
+    --line:#DBDDD4; --amber:#E2A33B; --amber-ink:#6B4507; --amber-bg:rgba(226,163,59,0.1);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:var(--paper); color:var(--ink);
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+  }
+  .card{
+    width:100%; max-width:360px; margin:24px; padding:32px;
+    background:var(--paper-raised); border:1px solid var(--line); border-radius:10px;
+    box-shadow:8px 8px 0 var(--amber);
+  }
+  h1{ font-size:19px; margin:0 0 6px; }
+  p.sub{ color:var(--muted); font-size:14px; margin:0 0 22px; }
+  label{ display:block; font-size:12.5px; font-weight:600; margin-bottom:6px; color:var(--muted); }
+  input[type="password"]{
+    width:100%; padding:11px 12px; font-size:15px; border:1px solid var(--line);
+    border-radius:6px; background:#fff; color:var(--ink); margin-bottom:16px;
+    font-family:'IBM Plex Sans', sans-serif;
+  }
+  input[type="password"]:focus{ outline:2px solid var(--amber); outline-offset:1px; }
+  button{
+    width:100%; padding:11px 12px; font-size:15px; font-weight:600; cursor:pointer;
+    background:var(--ink); color:var(--paper); border:none; border-radius:6px;
+    font-family:'IBM Plex Sans', sans-serif;
+  }
+  button:hover{ background:#000; }
+  .error{
+    background:var(--amber-bg); color:var(--amber-ink); border:1px solid var(--amber);
+    padding:9px 12px; border-radius:6px; font-size:13.5px; margin-bottom:16px; display:none;
+  }
+  .error.show{ display:block; }
+</style>
+</head>
+<body>
+  <form class="card" id="login-form" autocomplete="off">
+    <h1>This site is private</h1>
+    <p class="sub">Enter the password to continue.</p>
+    <div class="error" id="error-msg">Incorrect password. Try again.</div>
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" autofocus required>
+    <button type="submit">Enter</button>
+  </form>
+
+<script>
+  // SHA-256 hash of the site password. The plaintext password is never
+  // stored in this file — only this hash, which is compared against a
+  // hash of whatever the visitor types in.
+  const CORRECT_HASH = "761d1f27b1b2df5b4d99409107b191b1e6d79a7e9c7bcc4330e1bb8722404e8d";
+  const SESSION_KEY = "site_auth";
+
+  async function sha256Hex(text) {
+    const data = new TextEncoder().encode(text);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    return Array.from(new Uint8Array(hashBuffer))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+  }
+
+  function getRedirectTarget() {
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get("redirect");
+    // Only allow redirecting to a local page, never an external URL.
+    if (redirect && redirect.startsWith("/") === false && redirect.includes("://") === false) {
+      return redirect;
+    }
+    return "index.html";
+  }
+
+  document.getElementById("login-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const entered = document.getElementById("password").value;
+    const enteredHash = await sha256Hex(entered);
+
+    if (enteredHash === CORRECT_HASH) {
+      localStorage.setItem(SESSION_KEY, CORRECT_HASH);
+      window.location.href = getRedirectTarget();
+    } else {
+      document.getElementById("error-msg").classList.add("show");
+      document.getElementById("password").value = "";
+      document.getElementById("password").focus();
+    }
+  });
+
+  // If already logged in, skip straight through.
+  if (localStorage.getItem(SESSION_KEY) === CORRECT_HASH) {
+    window.location.href = getRedirectTarget();
+  }
+</script>
+</body>
+</html>

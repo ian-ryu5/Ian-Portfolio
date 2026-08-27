@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="../auth-guard.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ParaSensor activity classification — Ian Ryu</title>
+<meta name="description" content="An anonymized wearable-sensor activity-classification pipeline developed during an Emeis internship.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="nav-inner">
+    <a class="mark" href="../index.html#top"><span class="mark-dot"></span> Ian Ryu</a>
+    <nav class="links">
+      <a href="../index.html#projects">Projects</a>
+      <a href="../about.html">About</a>
+    </nav>
+    <div class="social-links" aria-label="Social links">
+      <a href="mailto:ianryu@outlook.com" aria-label="Email" title="Email"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></a>
+      <a href="https://github.com/ian-ryu5" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.744.084-.729.084-.729 1.205.084 1.838 1.237 1.838 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.775.42-1.305.763-1.605-2.665-.303-5.467-1.334-5.467-5.93 0-1.31.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+      <a href="https://linkedin.com/in/ianryu1" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap project-page project-parasensor" id="top">
+  <section class="detail-hero">
+    <a class="breadcrumb" href="../index.html#projects">← Back to all projects</a>
+    <div class="tag-row" style="margin-top:22px;">
+      <span class="tag-domain">Wearable sensors / classification</span>
+      <span class="tag-confidential">NDA project</span>
+    </div>
+    <h1 class="detail-title">ParaSensor Activity Classification</h1>
+    <p class="detail-role">Emeis Internship — Wearable-Sensor Data Processing &amp; Machine-Learning Pipeline</p>
+    <p class="detail-dates mono">July – August 2026</p>
+    <p class="detail-lede">A signal-processing and classification pipeline for distinguishing everyday activities from synchronized wearable-sensor recordings across healthy and stroke-patient populations.</p>
+  </section>
+
+  <section class="detail-section" style="padding-top:0;">
+    <div class="callout teal">
+      <p class="callout-title">NDA-safe overview</p>
+      <p style="margin-bottom:0;">This page intentionally contains no participant identifiers, raw recordings, personal health information, local file paths, or proprietary source code. The details below are limited to aggregate results and high-level methodology.</p>
+    </div>
+    <div class="lede-block">
+      <p>The project used wearable accelerometer, gyroscope, and insole-pressure signals to classify activities such as lying, sitting, standing, walking at different speeds, and stepping in place.</p>
+      <p style="margin-bottom:0;">The same processing workflow was run for healthy patients, stroke patients, and a combined population. The combined model created one shared feature space while accounting for differences between the two groups.</p>
+    </div>
+  </section>
+
+  <section class="detail-section">
+    <h2 class="detail-heading">Pipeline</h2>
+    <ol class="process-list">
+      <li class="process-step">
+        <span class="step-num"></span>
+        <div>
+          <h3 class="step-title">Synchronize Sensor Streams</h3>
+          <p>Activity timing information was used to align body-worn and insole signals onto a shared 90 Hz clock. Insole channels were resampled before the streams were combined into a wide per-subject representation.</p>
+        </div>
+      </li>
+      <li class="process-step">
+        <span class="step-num"></span>
+        <div>
+          <h3 class="step-title">Filter And Prepare Signals</h3>
+          <p>Sensor channels were cleaned with a median filter followed by Savitzky–Golay smoothing to reduce spikes and noise. Missing values were handled during filtering and preserved as missing afterward so genuine data gaps were not silently replaced.</p>
+        </div>
+      </li>
+      <li class="process-step">
+        <span class="step-num"></span>
+        <div>
+          <h3 class="step-title">Remove Transitions And Create Windows</h3>
+          <p>Samples between labeled activities were removed so transition movements did not become training examples. The remaining activity signals were divided into overlapping 5-second windows and downsampled from 90 Hz to 10 Hz for feature representation.</p>
+        </div>
+      </li>
+      <li class="process-step">
+        <span class="step-num"></span>
+        <div>
+          <h3 class="step-title">Reduce The Feature Space</h3>
+          <p>Windowed features were standardized using the training data and reduced with Principal Component Analysis. The number of components was selected to explain 90% of the variance, with visual diagnostics used to inspect activity separation.</p>
+        </div>
+      </li>
+      <li class="process-step">
+        <span class="step-num"></span>
+        <div>
+          <h3 class="step-title">Train And Evaluate The Classifier</h3>
+          <p>A class-balanced Random Forest classifier was trained on the PCA representation and evaluated with a held-out test split, activity-level classification metrics, and confusion matrices ordered by activity semantics.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="detail-section">
+    <h2 class="detail-heading">Pipeline Outputs</h2>
+    <p>These charts show the intermediate outputs and aggregate evaluation results that built the project from synchronized sensor streams to a tested activity classifier. They use report-level summaries only; no raw recordings or participant-level rows are shown.</p>
+
+    <figure class="fig">
+      <img src="images/parasensor/synthetic-filtering.svg" alt="Illustrative synthetic chart comparing a noisy raw sensor signal with a smoothed signal after median and Savitzky-Golay filtering." loading="lazy">
+      <figcaption class="fig-caption">Filtering output — a synthetic example of how spike reduction and smoothing prepare a sensor signal for later processing. This is not a project recording.</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <img src="images/parasensor/pipeline-stages.svg" alt="Diagram of the six ParaSensor stages: synchronize sensor streams, filter, remove transitions, create windows, reduce features with PCA, and classify with Random Forest." loading="lazy">
+      <figcaption class="fig-caption">Pipeline map — each stage turns the previous output into a representation ready for the next modeling step.</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <img src="images/parasensor/dataset-retention.svg" alt="Bar chart showing aggregate rows before and after transition removal for healthy, stroke, and combined configurations." loading="lazy">
+      <figcaption class="fig-caption">Data-preparation output — transition removal retained the labeled activity intervals used for windowing.</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <img src="images/parasensor/model-results.svg" alt="Bar chart showing Random Forest test accuracy of 99 percent for healthy patients, 96 percent for stroke patients, and 96.4 percent for the combined configuration." loading="lazy">
+      <figcaption class="fig-caption">Model output — PCA reduced the high-dimensional window features while preserving 90% of variance before classification.</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <img src="images/parasensor/pca-variance.svg" alt="Bar chart showing that 216, 178, and 254 PCA components were retained for the healthy, stroke, and combined configurations at the 90 percent variance threshold." loading="lazy">
+      <figcaption class="fig-caption">PCA output — the number of components retained at the 90% cumulative-variance threshold for each aggregate configuration.</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <img src="images/parasensor/sensor-ablation.svg" alt="Bar chart comparing selected sensor-ablation accuracies for stroke and combined configurations." loading="lazy">
+      <figcaption class="fig-caption">Ablation output — sensor removal experiments helped assess which wearable signals contributed most to classification.</figcaption>
+    </figure>
+  </section>
+
+  <section class="detail-section">
+    <h2 class="detail-heading">Population Comparison</h2>
+    <p>The pipeline was applied to three aggregate dataset configurations. Healthy and stroke populations each included 19 subjects; the combined configuration included 38 subjects. Sensor layouts, side labels, and walking-speed labels were reconciled before the combined model was trained.</p>
+    <table class="data-table">
+      <thead>
+        <tr><th>Configuration</th><th class="num">Subjects</th><th class="num">Input features</th><th class="num">PCA components</th><th class="num">Test accuracy</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Healthy patients</td><td class="num">19</td><td class="num">2,302</td><td class="num">216</td><td class="num">99.0%</td></tr>
+        <tr><td>Stroke patients</td><td class="num">19</td><td class="num">2,203</td><td class="num">178</td><td class="num">96.0%</td></tr>
+        <tr><td>Both combined</td><td class="num">38</td><td class="num">2,202</td><td class="num">254</td><td class="num">96.4%</td></tr>
+      </tbody>
+    </table>
+    <p>These are aggregate model results from the project report. They describe activity classification performance and should not be interpreted as clinical predictions or as evidence about any individual.</p>
+  </section>
+
+  <section class="detail-section">
+    <h2 class="detail-heading">Sensor Ablation</h2>
+    <p>Feature-ablation experiments tested how classification changed when groups of sensors were excluded. In the stroke configuration, removing the insole produced little change from the 96% baseline, while using wrist-only signals after removing other sensor groups reduced accuracy to 93%. In the combined configuration, removing the insole reduced accuracy to approximately 91.5%, suggesting that insole data provided a meaningful boost when both populations were modeled together.</p>
+    <div class="callout">
+      <p class="callout-title">Interpretation note</p>
+      <p style="margin-bottom:0;">One combined-dataset ablation reused baseline predictions after dropping ankle columns instead of retraining the model, so that result was not treated as a valid ankle-removal experiment. This was documented as a data-quality limitation rather than presented as a definitive sensor comparison.</p>
+    </div>
+  </section>
+
+  <section class="detail-section">
+    <h2 class="detail-heading">My Contribution</h2>
+    <p>I contributed to the wearable-sensor processing and modeling workflow, including data preparation, signal-processing steps, windowed feature construction, dimensionality reduction, classifier evaluation, and sensor-configuration experiments. I also helped compare the healthy, stroke, and combined configurations and document assumptions and limitations in the pipeline.</p>
+  </section>
+
+  <section class="detail-section" style="border-top:1px solid var(--line); padding-top:40px;">
+    <p class="nda-summary">NDA-protected data and code; aggregate results only.</p>
+    <div class="detail-footer-actions">
+      <a class="btn btn-primary" href="../index.html#projects">← Return Home</a>
+    </div>
+  </section>
+</main>
+
+<footer></footer>
+
+<a class="to-top mono" href="#top" id="toTop" aria-label="Back to top">↑</a>
+<script>
+  var toTop = document.getElementById('toTop');
+  window.addEventListener('scroll', function(){
+    if (window.scrollY > 500) { toTop.classList.add('visible'); }
+    else { toTop.classList.remove('visible'); }
+  });
+
+  requestAnimationFrame(function(){ document.body.classList.add('page-loaded'); });
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reducedMotion) {
+    document.addEventListener('click', function(e){
+      var a = e.target.closest('a');
+      if (!a) return;
+      var href = a.getAttribute('href');
+      if (!href || href.charAt(0) === '#' || a.target === '_blank' || href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0 || e.metaKey || e.ctrlKey) return;
+      e.preventDefault();
+      document.body.classList.remove('page-loaded');
+      setTimeout(function(){ window.location.href = href; }, 300);
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 310" role="img" aria-labelledby="title desc">
+  <title id="title">ParaSensor processing pipeline</title>
+  <desc id="desc">An anonymized diagram showing six stages: synchronize, filter, remove transitions, window, PCA, and Random Forest.</desc>
+  <rect width="1200" height="310" fill="#FBFCF9"/>
+  <g font-family="IBM Plex Sans, Arial, sans-serif" fill="#171B1A">
+    <text x="55" y="55" font-size="25" font-weight="600">From Raw Signals To Activity Labels</text>
+    <text x="55" y="83" font-size="15" fill="#5B6058">Each stage produces a cleaner, more compact representation for the next step.</text>
+  </g>
+  <g font-family="IBM Plex Mono, monospace" font-size="13" text-anchor="middle">
+    <g fill="#E8F1EF" stroke="#3E7C74">
+      <rect x="45" y="135" width="155" height="92" rx="7"/><rect x="235" y="135" width="155" height="92" rx="7"/>
+      <rect x="425" y="135" width="155" height="92" rx="7"/><rect x="615" y="135" width="155" height="92" rx="7"/>
+      <rect x="805" y="135" width="155" height="92" rx="7" fill="#FFF3DF" stroke="#E2A33B"/><rect x="995" y="135" width="155" height="92" rx="7" fill="#FFF3DF" stroke="#E2A33B"/>
+    </g>
+    <g fill="#1E3D38">
+      <text x="122" y="169"><tspan x="122" dy="0">01</tspan><tspan x="122" dy="25">Synchronize</tspan><tspan x="122" dy="20" fill="#5B6058">shared clock</tspan></text>
+      <text x="312" y="169"><tspan x="312" dy="0">02</tspan><tspan x="312" dy="25">Filter</tspan><tspan x="312" dy="20" fill="#5B6058">smooth signals</tspan></text>
+      <text x="502" y="169"><tspan x="502" dy="0">03</tspan><tspan x="502" dy="25">Transitions</tspan><tspan x="502" dy="20" fill="#5B6058">remove noise</tspan></text>
+      <text x="692" y="169"><tspan x="692" dy="0">04</tspan><tspan x="692" dy="25">Window</tspan><tspan x="692" dy="20" fill="#5B6058">5 sec / 10 Hz</tspan></text>
+      <text x="882" y="169"><tspan x="882" dy="0">05</tspan><tspan x="882" dy="25">PCA</tspan><tspan x="882" dy="20" fill="#6B4507">90% variance</tspan></text>
+      <text x="1072" y="169"><tspan x="1072" dy="0">06</tspan><tspan x="1072" dy="25">Random Forest</tspan><tspan x="1072" dy="20" fill="#6B4507">activity output</tspan></text>
+    </g>
+  </g>
+  <g stroke="#3E7C74" stroke-width="2" fill="none" stroke-linecap="round">
+    <path d="M205 181h20M395 181h20M585 181h20M775 181h20M965 181h20"/>
+  </g>
+  <g fill="#3E7C74"><path d="m220 175 10 6-10 6zM410 175l10 6-10 6zM600 175l10 6-10 6zM790 175l10 6-10 6zM980 175l10 6-10 6z"/></g>
+</svg>

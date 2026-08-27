@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" role="img" aria-labelledby="title desc">
+  <title id="title">Synthetic raw and filtered sensor signal</title>
+  <desc id="desc">Illustrative chart comparing a noisy synthetic sensor signal with a smoothed filtered signal. No project recording is used.</desc>
+  <rect width="900" height="500" fill="#FBFCF9"/>
+  <g font-family="IBM Plex Sans, Arial, sans-serif" fill="#171B1A">
+    <text x="55" y="52" font-size="24" font-weight="600">Signal Filtering Output</text>
+    <text x="55" y="79" font-size="14" fill="#5B6058">Illustrative synthetic signal showing spike reduction and smoothing</text>
+  </g>
+  <g stroke="#DBDDD4" stroke-width="1"><path d="M75 125v270M75 260h760M75 395h760"/></g>
+  <g font-family="IBM Plex Mono, monospace" font-size="12" fill="#5B6058"><text x="35" y="130">1.0</text><text x="35" y="264">0.0</text><text x="35" y="399">-1.0</text><text x="75" y="420">0 s</text><text x="790" y="420">5 s</text></g>
+  <polyline fill="none" stroke="#C5C9C0" stroke-width="2" points="75,260 95,235 115,190 135,220 155,145 175,225 195,205 215,270 235,315 255,280 275,345 295,260 315,220 335,185 355,230 375,140 395,250 415,270 435,235 455,180 475,220 495,325 515,275 535,225 555,240 575,180 595,220 615,155 635,245 655,285 675,235 695,205 715,260 735,310 755,250 775,210 795,230 815,260"/>
+  <polyline fill="none" stroke="#3E7C74" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" points="75,260 115,225 155,195 195,225 235,285 275,300 315,220 355,205 395,225 435,235 475,230 515,280 555,220 595,205 635,210 675,245 715,245 755,270 795,225 815,240"/>
+  <g font-family="IBM Plex Sans, Arial, sans-serif" font-size="14"><line x1="90" y1="455" x2="125" y2="455" stroke="#C5C9C0" stroke-width="3"/><text x="135" y="460" fill="#5B6058">synthetic raw signal</text><line x1="330" y1="455" x2="365" y2="455" stroke="#3E7C74" stroke-width="4"/><text x="375" y="460" fill="#1E3D38">median + Savitzky–Golay output</text></g>
+</svg>

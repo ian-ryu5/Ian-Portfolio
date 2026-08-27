@@ -1,0 +1,526 @@
+---
+author: "Griffin DesRoches, Ian Ryu"
+title: "Predicting professional CS2 match results"
+date: "2025-11-06"
+output:
+  pdf_document:
+    number_sections: true
+header-includes:
+  - \usepackage{float}
+  - \usepackage{placeins}
+  - \usepackage{caption}
+---
+```{r echo=FALSE, include=FALSE, message=FALSE}
+# all library load statements here
+library(tidyverse)
+library(caret)
+library(dplyr) 
+library(knitr)
+library(kableExtra)
+library(rattle)
+library(ggplot2)
+library(randomForest)
+library(rpart)
+library(xgboost)
+library(ROCR)
+library(ROSE)
+r.version <- "4.3.2"
+seed.val <- 123456
+```
+
+
+Counter-Strike is a competitive first-person shooter franchise first released in 2001. It is built around an objective-based game mode commonly referred to as 'bomb defusal', in which two teams of five players—Terrorists (offense) and Counter-Terrorists (defense)—compete over a series of rounds. The offensive side attempts to plant and detonate a bomb, while the defensive side attempts to prevent the plant or defuse the bomb afterward. Each round is economically constrained, highly tactical, and heavily influenced by coordination and information gathering, making Counter-Strike fundamentally different from typical shooter games driven primarily by mechanical aim.
+
+Counter-Strike 2 (CS2), released in 2023 as the successor to CS:GO, currently sits at the center of one of the world's largest esports ecosystems. Professional CS2 features a global circuit of tournaments, ranging from online regional competitions to multi-million-dollar international LAN events. Teams compete year-round, and every match generates a rich set of statistics—kills, deaths, opening duels, clutches, damage, utility usage, and more—that are logged and archived on public data platforms such as HLTV.org. Because of this, CS2 provides an unusually well-instrumented environment for quantitative analysis.
+
+From a statistical perspective, CS2 is both attractive and challenging. The game is a stochastic, zero-sum environment: randomness, imperfect information, economy management, and human decision-making all influence outcomes in ways that are not fully deterministic. Yet teams also display persistent strengths, strategic identities, and stylistic tendencies over time, suggesting that meaningful patterns exist. As a result, forecasting CS2 match outcomes has become a domain of interest not only for esports analysts, coaches, and data scientists, but also for betting markets and automated prediction systems. The ability to model match results has clear real-world value, but the predictive task is far from straightforward.
+
+Overall, CS2 match prediction serves as a rich case study for understanding how statistical models behave in settings with high variance, partial information, and dynamic underlying processes. In this project, we aim to investigate which pre-match attributes are most relevant for determining a team’s likelihood of winning, and to evaluate how effectively common machine-learning models—logistic regression, random forests, and boosted trees—capture these relationships.
+
+# Data Retrieval
+The data set that we used in this process, an expansive original data set relating to CS2 professional match data, was scraped on the behalf of author Griffin DesRoches. The data set was scraped from hltv.org, a CS2 esports forum which holds matches and match results for both professional and semi-professional CS2 matches along with their data attributes. To scrape this data, a python cloudscrape script was used with respect to the robots.txt file on the site. The scraping followed common ethical conventions relating to web scraping. Currently, the data set can be accessed for free under the author's Kaggle page[1] for complete open use under the CC0 Public Domain Dedication.
+
+# Data Description and Processing
+The data set used in this project was expansive, the raw data file contained 76 columns and over 11000 rows. Due to the nature the project being to forecast future CS2 matches, we had to sort the data set by date, and from there we could work with create certain time-based features in the future. A key aspect of this analysis was to ensure the features we were selecting for our analysis were to be relevant in the analysis of our data. For this reason, this reason will only explain a small subset of our data set, that being, the columns in the data set that we actually go on to utilize in our analysis. Note that on all HLTV games in the results page, the games are in the format of the first team "team1" versus the second team "team2", all features are calculated through a difference in the attribute in the first team minus the second team. All of the relevant columns in our analysis are taken specifically from the "mapstatsid" page from the results page on the hltv website from which, we are able to retrieve the following raw data from each team, 1 or 2, abbreviated as either team N in the following graph, where the features are as follows:
+```{r derived-variable-table, echo=FALSE, fig.width=11, fig.pos='H'}
+variable_data <- data.frame(
+  Variable_Name = c(
+    "diff_roll5_adr", "diff_roll5_assists", "diff_roll5_clutches_won", "diff_roll5_deaths",
+    "diff_roll5_kast_pct", "diff_roll5_kills", "diff_roll5_multi_kill_rounds",
+    "diff_roll5_opening_deaths", "diff_roll5_opening_kills",
+    "diff_roll5_rating_3", "diff_roll5_swing_pct"
+  ),
+  Description = c(
+    "Average ADR of team1 minus the average ADR of team2 over past 5 games",
+    "Average number of assists of team1 minus the average assists of team2 over past 5 games",
+    "Average number of clutches of team1 minus the average clutches of team2 over past 5 games",
+    "Average number of deaths of team1 minus the average deaths of team2 over past 5 games",
+    "Average KAST of team1 minus the average KAST of team2 over past 5 games",
+    "Average number of multikill rounds of team1 minus the average multikill rounds of team2 over past 5 games",
+    "Average number of kills of team1 minus the average kills of team2 over past 5 games",
+    "Average number of opening deaths of team1 minus the average opening deaths of team2 over past 5 games",
+    "Average number of opening kills of team1 minus the average opening kills of team2 over past 5 games",
+    "Average rating of team1's highest-rated player minus the average rating of team2's highest-rated player over past 5 games",
+    "Average swing percentage of team1 minus the average swing percentage of team2 over past 5 games"
+  )
+)
+
+variable_data %>%
+  kbl(
+    caption   = "Description of Derived Features in the CS2 Match Data Set (all variables are numeric).",
+    col.names = c("Variable Name", "Description"),
+    align     = c("l", "l"),
+    booktabs  = TRUE,
+    linesep   = ""
+  ) %>%
+  kable_styling(
+    full_width    = FALSE,
+    font_size     = 9,
+    latex_options = c("HOLD_position")
+  ) %>%
+  column_spec(2, width = "9cm")
+```
+Note: all of these variables are numeric.
+
+# Definition of technical language
+For clarity, we will define any technical language used in the paper below:
+
+Opening Kill / Opening Death - The first kill/death in a round; often sets the economic and positional tone.
+
+Trade \/ Trading - When a teammate immediately responds to a death by killing the opponent, maintaining numeric equality.
+
+Clutch -One player winning a round while outnumbered.
+
+Swing Percentage -How frequently players generate high-impact moments that shift round outcomes (multi\-kills, clutch wins, key trades). High swingPCT = deciding factor in many rounds.
+
+KAST - A composite stat measuring rounds where a player gets a kill, assist, survives, or trades.
+
+ADR - Average damage per round — a core measure of mechanical contribution.
+
+Rolling Average (5\-Game Window) - Why it matters for form instead of raw stats.
+
+
+# Data Exploration
+Before conducting any modeling, we performed an initial exploratory analysis to ensure the data was clean, interpretable, and representative of real competitive conditions. The raw data set contained 11260 match observations collected from HLTV, but not all were suitable for inclusion in our models. To produce an altered data set, best fit for our analysis, we systematically filtered, and removed certain rows from our data set. All NULL missing values in the data set were removed from the data. We also removed all rows containing teams that did not have at least 5 prior games to recieve the average. In total, this deleted **3034** rows from our data set, lowering the total count of rows used in the analysis from **11260** to **8226**. This makes our data set weaker in terms of predictive power, but ensures all values are not being swayed by NULL values, or improper rolling averages
+
+```{r, echo=FALSE, fig.width=11, fig.pos='H'}
+cs.df <- read.csv("newest_ts_ds.csv")
+
+before_row <- nrow(cs.df)
+cs.df <- na.omit(cs.df)
+cs.df$team1_win_flag <- ifelse(
+  cs.df$team1_score == 1 | cs.df$team1_score == 0,
+  0,
+  1  
+)
+cs.df <- cs.df %>%
+  mutate(
+    team1_win_flag = ifelse(team1_score %in% c(0, 1), 0, 1)
+  )
+```
+
+Two variables are expected to be critical for our analysis, those being diff_roll5_swing_pct, the difference in the average swing% among team1 and team2 in their past 5 games, and diff_roll5_rating_3, the difference in the highest rated player among team1 and team2. From here, the variable of interest's distribution is able to be explored.
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.pos='H', fig.cap="Distribution of rolling 5-game rating 3.0 difference (team1 minus team2)."}
+hist(cs.df$diff_roll5_swing_pct, freq = FALSE, main = "", xlab="diff_roll5_swing_pct")
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.pos='H', fig.align='center',}
+summaryratingdiff_tbl <- data.frame(
+  ratingdiff_mean = mean(cs.df$diff_roll5_rating_3, na.rm = TRUE),
+  ratingdiff_sd = sd(cs.df$diff_roll5_rating_3, na.rm = TRUE),
+  ratingdiff_min = min(cs.df$diff_roll5_rating_3, na.rm = TRUE),
+  ratingdiff_max = max(cs.df$diff_roll5_rating_3, na.rm = TRUE)
+)
+kable(summaryratingdiff_tbl,
+      digits = 3,
+      caption = " Sample size and distributional summary for Difference in rating"
+) %>%
+  kable_styling(full_width = FALSE,
+                latex_options = "HOLD_position") #need to do this to stop the figure from randomly locking in a weird place
+```
+
+The distribution of diff_roll5_swing_pct (the difference in recent swing percentage between team1 and team2) is approximately normal and centered tightly around zero. This aligns with expectations from CS2 competitive structure. Swing percentage reflects how often a player or team meaningfully “swings” rounds in their favor: converting multi-kill scenarios, winning clutches, recovering man-disadvantages, or otherwise generating disproportionately high impact in a round. Conversely, consistently dying first or failing to trade effectively depresses a team’s swing percentage.
+
+Since professional teams generally field players with comparable mechanical ability and impact consistency, large disparities in swing% are uncommon. Most matches involve teams where the total round-impact potential is roughly balanced, leading to the small standard deviation (~0.12) observed. A large positive or negative swing% difference would imply that one team’s players have been consistently deciding rounds across multiple matches — something that does occur, but rarely, and usually only in mismatched or unstable rosters.
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.pos='H', fig.cap="Distribution of rolling 5-game swing\\% difference (team1 minus team2)."}
+hist(cs.df$diff_roll5_rating_3, freq = FALSE, main = "", xlab="diff_roll5_rating_3")
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.pos='H'}
+summaryswing_tbl <- data.frame(
+  swingdiff_mean = mean(cs.df$diff_roll5_swing_pct, na.rm = TRUE),
+  swingdiff_mean_sd = sd(cs.df$diff_roll5_swing_pct, na.rm = TRUE),
+  swingdiff_mean_min = min(cs.df$diff_roll5_swing_pct, na.rm = TRUE),
+  swingdiff_mean_max = max(cs.df$diff_roll5_swing_pct, na.rm = TRUE)
+)
+kable(summaryswing_tbl, digits = 3, caption = " Sample size and distributional summary for Difference in swing\\% over past 5 games"
+) %>%
+  kable_styling(full_width = FALSE,
+                latex_options = "HOLD_position") #need to do this to stop the figure from randomly locking in a weird place
+```
+As seen in the histogram, the average difference in Rating 3.0 between team1 and team2 is approximately normally distributed, centered very close to 0, with a standard deviation of about 1.42. This distributional shape is expected for two key reasons.
+
+First, Rating 3.0 is a player-level performance summary metric that captures a blend of kills, survivability, impact, and multi-kill rounds. When averaging this value over the past 5 games for both teams and taking the difference, we should expect most values to remain close to zero: professional teams tend to compete against opponents of comparable skill, and even when mismatches occur, rating differences rarely become extreme. Large deviations from zero require one team to have a consistently dominant high performer while the other lacks such a player across several matches, a circumstance that is uncommon in high-level CS2.
+
+Second, the standard deviation of 1.42—substantially larger than that of swing%—indicates that Rating 3.0 varies more widely across teams and matches. Swing percentage is tightly bound by gameplay structure (clutches, opening duels, trade attempts), whereas Rating 3.0 reflects a broader set of performance factors. This higher variability suggests that rating differences may contain more meaningful discriminatory power when predicting match outcomes, since a predictor with a wider range can more effectively separate strong teams from weaker ones.
+
+Another variable of interest is the distribution of match outcomes across the two possible classes: team1 wins and team2 wins. Once we visualize the frequency of each outcome, a noteworthy irregularity emerges:
+
+
+Figure 2.5: Frequency of match outcomes among team1 and team2
+
+```{r, echo=FALSE, fig.pos='H', fig.height=3.5, fig.width=7, fig.cap="Frequency of match outcomes among team1 and team2"}
+
+win_freq <- table(cs.df$team1_win_flag)
+
+win_data <- data.frame(
+  Outcome = c("Team 2 Win", "Team 1 Win"),
+  Count = as.numeric(win_freq)
+)
+
+
+ggplot(win_data, aes(x = Outcome, y = Count, fill = Outcome)) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = c("Team 2 Win" = "steelblue", "Team 1 Win" = "tomato")) +
+  labs(
+    title = NULL, 
+    y = "Count of Wins",
+    x = "Outcome"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none") 
+
+```
+The distribution of our dependent variable shows a surprising imbalance: team1 wins a disproportionately large share of matches in the dataset. In our cleaned sample, approximately 62% of all matches were won by team1, whereas only 38% were won by team2. This is unexpected because there is no structural reason within CS2 or within HLTV’s data-reporting system that should produce such a skew.
+
+HLTV does not systematically assign the stronger team as "team1," nor does it order teams alphabetically or by ranking. Therefore, the imbalance does not reflect meaningful game-related asymmetry—it is effectively an artifact of how matches happened to be logged in this scraped dataset.
+
+The issues this irregularity causes are elaborated on in our section 2, when it becomes an issue in our forecasting.
+
+# Modeling 
+
+## Research Question
+In our analysis, we wish to answer the question: which of our team-level attributes, if any, directly contribute to a CS2 team's victory, and which is the most important attribute to the victory?
+
+## Hypothesis
+Factors that are directly related to round wins, like averages difference in clutches, and difference in swing%, are the most important indicators in predicting a CS2 match victory. 
+
+## Model 1 Logistic Regression:
+In our first model, we will fit a logistic regression model to predict the winner of each game. We are solving a classification problem: whether team1 wins or loses based on the difference between team1 and team2's features. We opted to use 75% of the our data set for training, and the remaining 25% for testing. Since the dataset is in chronological order, we choose the 25% most recent games as the test games, and all older games were used as training data. We chose to do this because the features are based on rolling averages, meaning the rows aren't independent. Since we are investigating which features are the most important, all of the aforementioned created features from the previous table are used in the logistic regression model. We then went on to run the logistic model trained on the training data onto the testing data, to which we got the following output:
+
+```{r echo=FALSE}
+RNGversion(r.version)
+set.seed(seed.val)
+n <- nrow(cs.df)
+cs.df$team1_win_flag <- as.factor(cs.df$team1_win_flag)
+train_size <- floor(0.75 * n)
+# here we make it so that the 80% oldest matches are the training data, and the 20% newest matches are in the testing set, since 
+train.data <- cs.df[1:train_size, ]
+test.data  <- cs.df[(train_size+1):n, ]
+
+```
+
+
+```{r echo=FALSE}
+
+tc <- trainControl(method="cv", number =12)
+
+set.seed(seed.val)
+
+logreg.mod <- train(form = team1_win_flag ~ diff_roll5_adr+diff_roll5_assists+diff_roll5_clutches_won+diff_roll5_deaths+diff_roll5_kast_pct+diff_roll5_kills+diff_roll5_multi_kill_rounds+diff_roll5_opening_deaths+diff_roll5_opening_kills+diff_roll5_rating_3+diff_roll5_swing_pct,
+ data = train.data,
+ trControl = tc,
+ method = "glm",
+ family = "binomial"
+ )
+```
+
+```{r echo=FALSE, fig.pos='H', fig.align = 'center'}
+data <- data.frame(
+  Coefficient = c("(Intercept)", "diff_roll5_adr", "diff_roll5_assists", "diff_roll5_clutches_won",
+                  "diff_roll5_deaths", "diff_roll5_kast_pct", "diff_roll5_kills",
+                  "diff_roll5_multi_kill_rounds", "diff_roll5_opening_deaths", "diff_roll5_opening_kills",
+                  "diff_roll5_rating_3", "diff_roll5_swing_pct"),
+  Estimate = c(0.436381, -0.019426, 0.005566, -0.004576,
+               -0.024324, 0.013815, 0.005952,
+               -0.009278, 0.074833, 0.063248,
+               0.060683, 0.012087),
+  Std.Error = c(0.026465, 0.020666, 0.004531, 0.027332,
+                0.004926, 0.014699, 0.008015,
+                0.013619, 0.031945, 0.031626,
+                1.557538, 0.089363),
+  z_value = c(16.489, -0.940, 1.228, -0.167,
+              -4.938, 0.940, 0.743,
+              -0.681, 2.343, 2.000,
+              0.039, 0.135),
+  Pr_z = c("< 2e-16 ***", "0.3472", "0.2193", "0.8670",
+           "7.9e-07 ***", "0.3473", "0.4577",
+           "0.4957", "0.0192 *", "0.0455 *",
+           "0.9689", "0.8924")
+)
+
+names(data) <- c("Coefficient", "Estimate", "Std. Error", "z value", "Pr(>|z|)")
+
+data %>%
+  kbl(caption = "Regression Model Coefficients",
+      digits = 6,
+      align = 'lrrrr') %>% 
+  kable_classic_2(full_width = F,  latex_options = "HOLD_position") %>% 
+  footnote(general = "Significance codes: '***' 0.001, '*' 0.05",
+           threeparttable = T,
+           escape = F)
+```
+The results from this regression, although only marginally significant for a few predictors, are indicative of the nature of CS2. CS2 is a game of trades, and the top teams in the world often have a player that serves as "bait" or an "info gatherer", these players often go in and die, but are immediately traded by their team mates, the key is that good teams trade these players. This means that the team whose player died first is actually the benefactor: they gained critical information about the enemy team, at the expense of their life but also an enemy's life. This pattern is reinforced by the significance of diff_roll5_opening_kills and diff_roll5_opening_deaths, both of which show weak but positive relationships with winning probability. These findings suggest that teams actively taking opening duels — whether winning or losing them — tend to perform better. This does not mean losing opening duels is good, but rather that teams engaging in opening fights are often stronger, structured, and confident — traits associated with overall match success. In other words, opening duel activity itself is a better indicator of team quality than simply winning or losing those duels. Surprisingly, none of the other columns, including columns that are seemingly directly correlated to round wins, like diff_roll5_clutches, and diff_roll5_swing_pct, from our hypothesis are significant in this result. Moreover, columns that are seemingly directly related to a teams skill, like diff_roll5_rating_3 or diff_roll5_kast, also have no significance to the outcome in either the positive or negative direction. This reinforces how CS2 outcomes are shaped less by individual performance metrics and more by team-based tactical execution, coordination, and momentum strategies, none of which are perfectly captured by individual static stats. 
+
+We are then able to create a table, where we show the model predicting match results in the test data. Through this where it can be seen that the logistic regression model has had an accuracy of 63.34% when predicting on the test data.
+```{r echo=FALSE}
+mod.preds <- predict(logreg.mod, newdata = test.data)
+test.actual <- test.data$team1_win_flag 
+tb <- confusionMatrix(mod.preds, test.actual, positive='1')
+#commenting this out because the formatting does not look good when the program gives the results. 
+# conf_matrix_data <- as.data.frame.matrix(tb$table)
+# # im using this because the default output looks horrible. 
+# knitr::kable(
+#   conf_matrix_data, 
+#   caption = "Centered Confusion Matrix",
+#   align = 'c'
+# )
+```
+```{r echo=FALSE}
+conf_matrix <- matrix(
+  c(160, 535, 
+    219, 1143),
+  nrow = 2,
+  byrow = FALSE 
+)
+
+rownames(conf_matrix) <- c("Prediction Lose", "Prediction Win")
+colnames(conf_matrix) <- c("Reference Lose", "Reference Win")
+
+stats_data <- data.frame(
+  Statistic = c(
+    "Accuracy", "95% CI", "No Information Rate", "P-Value [Acc > NIR]",
+    "Kappa", "Mcnemar's Test P-Value", "Sensitivity", "Specificity",
+    "Pos Pred Value", "Neg Pred Value", "Prevalence", "Detection Rate",
+    "Detection Prevalence", "Balanced Accuracy"
+  ),
+  Value = c(
+    "0.6334", "(0.6122, 0.6543)", "0.6621", "0.9971",
+    "0.0781", "<2e-16", "0.8392", "0.2302",
+    "0.6812", "0.4222", "0.6621", "0.5557",
+    "0.8158", "0.5347"
+  )
+)
+
+kable(
+  conf_matrix,
+  caption = "Model Confusion Matrix",
+  col.names = c("Reference Lose", "Reference Win"),
+  align = 'c'
+)
+kable(
+  stats_data,
+  caption = "Model Performance Statistics",
+  align = 'l'
+)
+```
+       
+A way to visualize the results from the logistic regression model is to use an AUC curve. A Receiver Operating Characteristic (ROC) curve provides a comprehensive way to evaluate the performance of a binary classifier across all possible classification thresholds. Rather than committing to a single cutoff (such as predicting class 1 when the estimated probability exceeds 0.5), the ROC curve visualizes how the model behaves as this threshold changes. The curve plots the true positive rate (sensitivity) on the y-axis against the false positive rate (1 - specificity) on the x-axis. A model with strong discriminative ability will achieve a high true positive rate while maintaining a low false positive rate, producing a curve that bows toward the upper-left corner.. It gives us insight as to how the true positive rate compares to the false positive rate. 
+
+```{r out.width="85%", out.height="45%", fig.align = 'center', fig.cap="ROC Plot for the logistic regression model", fig.pos='H', echo=FALSE}
+mod.probs <- predict(logreg.mod, newdata = test.data, type = "prob")[, 2]
+pred.vals <- prediction(mod.probs, test.actual)
+perf.val <- performance(pred.vals, "tpr", "fpr")
+plot(perf.val, col = 'blue', lwd = 1.5)
+abline(0,1,lty=3)
+perf.mod<- performance(pred.vals,'auc',fpr.stop=1)
+auc.mod<-slot(perf.mod,"y.values")[[1]]
+legend("bottomright", legend=c(paste("AUC = ",round(auc.mod, 2))), cex=0.8)
+
+
+set.seed(123)
+cv.ctrl <- trainControl(method = "cv", number = 5)
+
+rf.cv <- train(
+    team1_win_flag ~ diff_roll5_adr+diff_roll5_assists+diff_roll5_clutches_won+diff_roll5_deaths+diff_roll5_kast_pct+diff_roll5_kills+diff_roll5_multi_kill_rounds+diff_roll5_opening_deaths+diff_roll5_opening_kills+diff_roll5_rating_3+diff_roll5_swing_pct,
+    data = train.data,
+    method = "rf",
+    trControl = cv.ctrl
+)
+
+
+```
+As seen in the ROC curve, our logistic regression model received an AUC score of 0.58. In a highly stochastic game like CS2, this value indicates a poor to moderate level of discrimination ability, suggesting the model performs slightly better than random chance (AUC = 0.5) but just falls short of a decent range which typically begins at AUC = 0.6. In other terms, an AUC of 0.58 means that there is a 58% chance that the model will correctly rank a randomly chosen positive case higher than a randomly chosen negative case. In the context of an fairly non-deterministic process, like professional CS2 matches, this AUC score indicates very weak discriminatory ability.
+ 
+## Model 2: Random Forest / Decision Trees
+
+For the second model, we opted to use a more complex model that could pick up complex nonlinear relationships between the features that a logistic regression model cannot represent. For this, we selected ensemble tree-based methods to best pick up on nuances within the many features. We implemented both a Random Forest model and a boosted tree model, which allows us to assess whether these more flexible algorithms provide predictive improvements over the prior logistic regression. Since the purpose of our study is two identify the most important variables in determining a teams win, we specifically opt to employ all of the aforementioned variables into each tree model. Although some predictors were determined to be less important in the logistic regression model, we don't know how the tree model will pick up on them, so no variables are removed from this model.
+```{r echo=FALSE}
+#single rf tree
+
+win.rf<-randomForest(team1_win_flag ~ diff_roll5_adr+diff_roll5_assists+diff_roll5_clutches_won+diff_roll5_deaths+diff_roll5_kast_pct+diff_roll5_kills+diff_roll5_multi_kill_rounds+diff_roll5_opening_deaths+diff_roll5_opening_kills+diff_roll5_rating_3+diff_roll5_swing_pct, data=train.data, mtry=6, importance=TRUE)
+
+tree.pred <- predict(win.rf, newdata = test.data)
+
+win.boost <- train(team1_win_flag ~ diff_roll5_adr+diff_roll5_assists+diff_roll5_clutches_won+diff_roll5_deaths+diff_roll5_kast_pct+diff_roll5_kills+diff_roll5_multi_kill_rounds+diff_roll5_opening_deaths+diff_roll5_opening_kills+diff_roll5_rating_3+diff_roll5_swing_pct, data = train.data, method = "xgbTree", verbosity = 0)
+boosted.tree.pred <- predict(win.boost, test.data)
+
+```
+
+We choose a baseline random forest model, and a boosted tree model that will build trees sequentially. From which we are able to determine each models accuracy, while predicting match outcomes on the test data, using our predictions on the test data, we are able to construct the following table which gives us their accuracy along with other measures of robustness among the two trees:
+
+```{r echo=FALSE}
+# rf eval
+rf.pred.class <- predict(win.rf, newdata = test.data)
+rf.prob <- predict(win.rf, newdata = test.data, type = "prob")[,2]
+
+rf.cm <- confusionMatrix(rf.pred.class, test.data$team1_win_flag, positive = '1')
+#bt eval
+boost.pred.class <- predict(win.boost, newdata = test.data)
+boost.prob <- predict(win.boost, newdata = test.data, type = "prob")[,2]
+
+boost.cm <- confusionMatrix(boost.pred.class, test.data$team1_win_flag, positive = '1')
+```
+
+```{r echo=FALSE}
+conf_matrix <- matrix(
+  c(166, 529,  
+    230, 1132), 
+  nrow = 2,
+  byrow = FALSE
+)
+
+rownames(conf_matrix) <- c("Prediction Lose", "Prediction Win")
+colnames(conf_matrix) <- c("Reference Lose", "Reference Win")
+
+kable(
+  conf_matrix,
+  caption = "Random Forest Confusion Matrix",
+  align = 'c'
+)
+stats_data <- data.frame(
+  Statistic = c(
+    "Accuracy", "95% CI", "No Information Rate", "P-Value [Acc > NIR]",
+    "Kappa", "Mcnemar's Test P-Value", "Sensitivity", "Specificity",
+    "Pos Pred Value", "Neg Pred Value", "Prevalence", "Detection Rate",
+    "Detection Prevalence", "Balanced Accuracy", "'Positive' Class"
+  ),
+  Value = c(
+    "0.6310", "(0.6097, 0.6519)", "0.6621", "0.9986",
+    "0.0782", "<2e-16", "0.8311", "0.2388",
+    "0.6815", "0.4192", "0.6621", "0.5503",
+    "0.8075", "0.5350", "1"
+  )
+)
+
+kable(
+  stats_data,
+  caption = "Random Forest Performance Statistics",
+  align = 'l'
+)
+
+conf_matrix <- matrix(
+  c(63, 632,
+    76, 1286),
+  nrow = 2,
+  byrow = FALSE
+)
+```
+
+Our random forest model shows a poor level of prediction power, a modest accuracy of 63.1% appears well, but a flaw can be seen for the P-value [ACC > NIR] value. That value gives us the probability that a machine learning model outperformed an No Information Rate (NIR model), which simply always guesses the majority outcome label, which we have established prior, is team1 due to an imbalance in the outcome. The null hypothesis for this test is that the model outperformed the NIR model, but since it has a value of 0.9986, we accept this hypothesis. The second, boosted tree model's results can be seen below
+
+```{r echo=FALSE}
+rownames(conf_matrix) <- c("Prediction Lose", "Prediction Win")
+colnames(conf_matrix) <- c("Reference Lose", "Reference Win")
+
+kable(
+  conf_matrix,
+  caption = "Boosted Tree Model Confusion Matrix",
+  align = 'c'
+)
+stats_data2 <- data.frame(
+  Statistic = c(
+    "Accuracy", "95% CI", "No Information Rate", "P-Value [Acc > NIR]",
+    "Kappa", "Mcnemar's Test P-Value", "Sensitivity", "Specificity",
+    "Pos Pred Value", "Neg Pred Value", "Prevalence", "Detection Rate",
+    "Detection Prevalence", "Balanced Accuracy", "'Positive' Class"
+  ),
+  Value = c(
+    "0.6558", "(0.6348, 0.6763)", "0.6621", "0.7359",
+    "0.0433", "<2e-16", "0.94420", "0.09065",
+    "0.67049", "0.45324", "0.66213", "0.62518",
+    "0.93243", "0.51742", "1"
+  )
+)
+
+kable(
+  stats_data2,
+  caption = "Boosted Tree Model Performance Statistics",
+  align = 'l'
+)
+
+```
+
+From the confusion matrix from both our random forest model and boosted tree model, we received a 63.1% and 65.58 accuracy, respectively. Notably, this is a lower accuracy than our logistic regression model, which had an accuracy of 66.07, meaning that the ensemble tree models were not stronger than the logistic regression model, as we assumed would be the case. A highly interesting issue to note are the very low balanced accuracy for the two models, offering a balanced accuracy of 53.5%, and 51.7% for the random forest and boosted tree model, respectively. These poor balanced accuracy values, reveal an imbalanced outcome, upon further analysis, there appears to be a disparity within the outcome variable. 62.18% of all games are won by team1, and only 37.82% of all games are won by team2. This reveals an interesting issue that our ensemble tree models are picking up: since the outcome variables are imbalanced, the model is just accurately guessing the majority class, which is causing a high accuracy, but low balanced accuracy. This idea is furthered from the high p-value for for the NIR test, for each model, since we accept the hypothesis that our model is being outperformed by a second "model" that just guesses the majority class each time Since all of our features are in reference to team1, this means that the first team listed in the hltv results page in the form "Team1 vs. Team2" is winning. With this noted, one may think that the site uses ranking, to decide what team will be "team1", but upon inspection, there isn't any trend in what team is selected, neither alphabetical either. This means that this imbalance in our outcome column is likely purely by chance, and doesn't entail team1 is inherently more likely to win via how that team is selected, but still, team1 wins more on average. Nonetheless, it reveals a critical issue in an analysis of CS2 data. 
+
+To further explore the accuracy of our model we will create another AUC plot, we will select the model with the higher balanced accuracy out of our two tree models to explore, that being, the random forest model. Upon creating the plot we receive the following:
+
+```{r out.width="85%", out.height="45%", fig.align = 'center', fig.cap="ROC Plot for the Random Forest model.", fig.pos='H', echo=FALSE}
+rf.probs <- predict(win.rf, newdata = test.data, type = "prob")[, "1"]
+
+test.actual <- ifelse(test.data$team1_win_flag == "1", 1, 0)
+
+pred.obj2 <- prediction(rf.probs, test.actual)
+
+perf.vals2 <- performance(pred.obj2, "tpr", "fpr")
+plot(perf.vals2, col = "blue", lwd = 1.5)
+abline(0, 1, lty = 3)
+
+perf.mod2 <- performance(pred.obj2, "auc")
+auc.mod2  <- slot(perf.mod2, "y.values")[[1]]
+
+legend("bottomright",
+       legend = paste("Random Forest AUC =", round(auc.mod2, 2)),
+       cex = 0.8)
+
+```
+
+Our random forest AUC curve got a similar value to the first AUC curve, with an AUC value of 0.57-0.58. Similarly, this indicates a moderate to poor performance in ranking a randomly chosen positive case higher than a randomly chosen negative case. This contributes to the general trend that we are seeing, that being that all of the features we have are not strong enough at predicting match results.
+
+In our logistic regression model, we were able to determine the most important predictors in determining the winner of a match by analyzing their p-values. A random forest does not work in that regard. For the random forest, we instead determine variable importance by analyzing two key metrics: The decrease in prediction accuracy when a variable is permuted (shuffled), and The total reduction in the Gini impurity contributed by each variable across all splits in the trees (often referred to as Gini Importance). To which, we get the following graph for the random forest model. 
+
+```{r echo=FALSE, fig.width=8, fig.cap="Variable importance plot for Random Forest model"}
+par(mar = c(5, 12, 4, 2))
+varImpPlot(win.rf, main = "Figure 5. Variable importance plot for random forest model")
+```
+Interestingly, the variable importance plots for the random forest model do not agree with the important variables in the logistic regression model. In the logistic regression model the most important variables (variables with the lowest p-value) were diff_roll5_opening_deaths, and diff_roll5_opening_kills, both of these related to early round behavior, dying first and then trading someone made sense to contributing to the winning odds, but these variables are not nearly as important in the random forest. In the random forest model, other variables contributed more to a drop in the accuracy, with the greatest decrease being attributed to the rolling average in the number of kills, deaths, and assists among teams. It appears the random forest considered more broad features, columns that we expected in our hypothesis like kast, and swing pct both had a large effect on the decrease in the GINI index, which we expected, considering these predictors are directly related to round-level success. 
+
+
+# Predicting with Models 1 and 2
+Using the fitted versions of the logistic regression model alongside the coupled Random Forest  and  Boosted Tree model, we generated predictions on the held-out test set to evaluate how each method performs on unseen match data. Both models output class predictions for whether team1 would win, and their performance was assessed using accuracy, confusion matrices, and balanced accuracy.
+
+The overall accuracy of both ensemble models fell in the mid-60% range, comparable to the logistic regression model. However, accuracy alone is misleading due to the class imbalance in the test set: approximately 67% of all matches in the testing window were team1 victories. As a result, a model that simply predicts “team1 wins” every time would already achieve close to 67% accuracy.
+
+Interestingly, the Random Forest and Boosted Tree models did not meaningfully outperform the logistic regression model, despite having a much greater capacity to model complex interactions. This indicates that the predictive limitations are likely rooted in the structure of the data, not the choice of algorithm. In particular:
+
+-Most pre-match variables are rolling averages, which may compress meaningful variation and fail to capture round-by-round dynamics.
+-CS2 outcomes are influenced by non-quantifiable factors (strategy, mid-round decision making, economy management, team chemistry) that are not represented in the dataset.
+
+The test period corresponds to recent competitive play, where roster instability and rapid meta shifts reduce the usefulness of historical statistics.
+
+Overall, the ensemble models demonstrate that increasing model complexity does not necessarily increase predictive performance in this domain. Instead, both models reveal the same underlying truth as the logistic regression analysis: CS2 match outcomes are difficult to predict using pre-match statistics alone, and even sophisticated tree-based approaches only capture modest structure in the data.
+
+# Summary and Conclusions
+This project explored the factors that influence match outcomes in professional CS2 competitions using a dataset of over 8000 matches. Through data cleaning, visualization, and modeling, we identified several variables that strongly relate to a team’s chances of winning.
+
+The results of this analysis indicate that the attributes most strongly associated with CS2 match outcomes are those that describe early-round engagements and consistent, team-wide performance patterns. In the logistic regression model, the most influential predictors were opening kill and opening death differentials, suggesting that early-round advantages—such as securing the first kill or trading efficiently—play a substantial role in determining a team’s likelihood of winning. These findings align with the structure of CS2, where early-round information and man-advantage frequently shape the rest of the round.
+
+The ensemble tree models identified a different but complementary set of important features. Rather than early-round events alone, the Random Forest and boosted models emphasized broader performance indicators such as rolling averages of kills, deaths, assists, and KAST. These team-level aggregates capture overall form, consistency, and mechanical proficiency across recent matches, demonstrating that long-term performance trends also contribute meaningfully to match outcomes.
+
+Together, these findings answer the research question by showing that both micro-level (early engagements) and macro-level (overall team form) attributes are relevant to predicting victory in CS2. However, the predictive accuracy of all models remained relatively modest, indicating that pre-match statistical features—while informative—cannot fully capture the strategic, economic, and psychological aspects that drive competitive CS2.
+
+Future work incorporating map-specific performance, player-level trends, economy-related metrics, or real-time round features could lead to stronger predictive models. Nonetheless, this study establishes a statistical foundation for understanding which measurable attributes most influence competitive outcomes in professional CS2.
+
+# References
+1. DesRoches, G. (2025). CS2 HLTV Professional match statistics dataset
+. Kaggle. Data set can be accessed via the link: https://www.kaggle.com/datasets/griffindesroches/cs2-hltv-professional-match-statistics-dataset. 

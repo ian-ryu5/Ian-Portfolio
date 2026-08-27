@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" role="img" aria-labelledby="t d">
+  <title id="t">Rolling-Feature Distributions</title>
+  <desc id="d">Two histograms computed from 8,226 cleaned matches, both centred close to zero: rolling rating 3.0 difference and rolling swing percentage difference.</desc>
+  <rect width="900" height="430" fill="#FBFCF9"/>
+  <text x="36" y="46" font-family="Space Grotesk, Arial, sans-serif" font-size="24" font-weight="600" fill="#171B1A">Rolling-Feature Distributions</text>
+  <text x="36" y="72" font-family="IBM Plex Sans, Arial, sans-serif" font-size="13.5" fill="#5B6058">Computed from 8,226 cleaned matches · dashed line marks zero</text>
+  <text x="96" y="114" font-family="Space Grotesk, Arial, sans-serif" font-size="17" font-weight="600" fill="#171B1A">Rating 3.0 Difference</text>
+  <text x="96" y="134" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="12" fill="#5B6058">mean 0.004  |  SD 0.122</text>
+  <line x1="96" y1="330.0" x2="420" y2="330.0" stroke="#DBDDD4" stroke-width="1"/>
+  <text x="86" y="334.0" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="11" fill="#5B6058" text-anchor="end">0</text>
+  <line x1="96" y1="239.0" x2="420" y2="239.0" stroke="#DBDDD4" stroke-width="1"/>
+  <text x="86" y="243.0" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="11" fill="#5B6058" text-anchor="end">1,000</text>
+  <line x1="96" y1="148.0" x2="420" y2="148.0" stroke="#DBDDD4" stroke-width="1"/>
+  <text x="86" y="152.0" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="11" fill="#5B6058" text-anchor="end">2,000</text>
+  <rect x="96.00" y="329.91" width="11.26" height="0.09" fill="#3E7C74"/>
+  <rect x="108.46" y="330.00" width="11.26" height="0.00" fill="#3E7C74"/>
+  <rect x="120.92" y="330.00" width="11.26" height="0.00" fill="#3E7C74"/>
+  <rect x="133.38" y="330.00" width="11.26" height="0.00" fill="#3E7C74"/>
+  <rect x="145.85" y="329.73" width="11.26" height="0.27" fill="#3E7C74"/>
+  <rect x="158.31" y="329.36" width="11.26" height="0.64" fill="#3E7C74"/>
+  <rect x="170.77" y="329.36" width="11.26" height="0.64" fill="#3E7C74"/>
+  <rect x="183.23" y="327.82" width="11.26" height="2.18" fill="#3E7C74"/>
+  <rect x="195.69" y="324.27" width="11.26" height="5.73" fill="#3E7C74"/>
+  <rect x="208.15" y="319.54" width="11.26" height="10.46" fill="#3E7C74"/>
+  <rect x="220.62" y="308.98" width="11.26" height="21.02" fill="#3E7C74"/>
+  <rect x="233.08" y="289.96" width="11.26" height="40.04" fill="#3E7C74"/>
+  <rect x="245.54" y="258.38" width="11.26" height="71.62" fill="#3E7C74"/>
+  <rect x="258.00" y="235.45" width="11.26" height="94.55" fill="#3E7C74"/>
+  <rect x="270.46" y="207.61" width="11.26" height="122.39" fill="#3E7C74"/>
+  <rect x="282.92" y="208.88" width="11.26" height="121.12" fill="#3E7C74"/>
+  <rect x="295.38" y="228.26" width="11.26" height="101.74" fill="#3E7C74"/>
+  <rect x="307.85" y="257.02" width="11.26" height="72.98" fill="#3E7C74"/>
+  <rect x="320.31" y="291.42" width="11.26" height="38.58" fill="#3E7C74"/>
+  <rect x="332.77" y="304.25" width="11.26" height="25.75" fill="#3E7C74"/>
+  <rect x="345.23" y="320.08" width="11.26" height="9.92" fill="#3E7C74"/>
+  <rect x="357.69" y="325.18" width="11.26" height="4.82" fill="#3E7C74"/>
+  <rect x="370.15" y="327.63" width="11.26" height="2.37" fill="#3E7C74"/>
+  <rect x="382.62" y="329.00" width="11.26" height="1.00" fill="#3E7C74"/>
+  <rect x="395.08" y="329.64" width="11.26" height="0.36" fill="#3E7C74"/>
+  <rect x="407.54" y="329.73" width="11.26" height="0.27" fill="#3E7C74"/>
+  <line x1="282.2" y1="142" x2="282.2" y2="330" stroke="#171B1A" stroke-width="1" stroke-dasharray="3 3" opacity="0.55"/>
+  <text x="282.2" y="136" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="11" fill="#171B1A" text-anchor="middle" opacity="0.75">0</text>
+  <line x1="96" y1="330" x2="420" y2="330" stroke="#5B6058" stroke-width="1"/>
+  <text x="126.2" y="350" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="11.5" fill="#5B6058" text-anchor="middle">-0.6</text>
+  <text x="204.2" y="350" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="11.5" fill="#5B6058" text-anchor="middle">-0.3</text>
+  <text x="282.2" y="350" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="11.5" fill="#5B6058" text-anchor="middle">0</text>
+  <text x="360.2" y="350" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="11.5" fill="#5B6058" text-anchor="middle">0.3</text>
+  <text x="412.2" y="350" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="11.5" fill="#5B6058" text-anchor="middle">0.5</text>
+  <text x="552" y="114" font-family="Space Grotesk, Arial, sans-serif" font-size="17" font-weight="600" fill="#171B1A">Swing Percentage Difference</text>
+  <text x="552" y="134" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="12" fill="#5B6058">mean 0.053  |  SD 1.425</text>
+  <line x1="552" y1="330.0" x2="864" y2="330.0" stroke="#DBDDD4" stroke-width="1"/>
+  <text x="542" y="334.0" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="11" fill="#5B6058" text-anchor="end">0</text>
+  <line x1="552" y1="239.0" x2="864" y2="239.0" stroke="#DBDDD4" stroke-width="1"/>
+  <text x="542" y="243.0" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="11" fill="#5B6058" text-anchor="end">1,000</text>
+  <line x1="552" y1="148.0" x2="864" y2="148.0" stroke="#DBDDD4" stroke-width="1"/>
+  <text x="542" y="152.0" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="11" fill="#5B6058" text-anchor="end">2,000</text>
+  <rect x="552.00" y="329.91" width="10.80" height="0.09" fill="#E2A33B"/>
+  <rect x="564.00" y="330.00" width="10.80" height="0.00" fill="#E2A33B"/>
+  <rect x="576.00" y="330.00" width="10.80" height="0.00" fill="#E2A33B"/>
+  <rect x="588.00" y="329.73" width="10.80" height="0.27" fill="#E2A33B"/>
+  <rect x="600.00" y="329.73" width="10.80" height="0.27" fill="#E2A33B"/>
+  <rect x="612.00" y="328.91" width="10.80" height="1.09" fill="#E2A33B"/>
+  <rect x="624.00" y="328.45" width="10.80" height="1.55" fill="#E2A33B"/>
+  <rect x="636.00" y="326.45" width="10.80" height="3.55" fill="#E2A33B"/>
+  <rect x="648.00" y="320.35" width="10.80" height="9.65" fill="#E2A33B"/>
+  <rect x="660.00" y="311.80" width="10.80" height="18.20" fill="#E2A33B"/>
+  <rect x="672.00" y="296.15" width="10.80" height="33.85" fill="#E2A33B"/>
+  <rect x="684.00" y="271.85" width="10.80" height="58.15" fill="#E2A33B"/>
+  <rect x="696.00" y="240.91" width="10.80" height="89.09" fill="#E2A33B"/>
+  <rect x="708.00" y="218.07" width="10.80" height="111.93" fill="#E2A33B"/>
+  <rect x="720.00" y="205.51" width="10.80" height="124.49" fill="#E2A33B"/>
+  <rect x="732.00" y="223.53" width="10.80" height="106.47" fill="#E2A33B"/>
+  <rect x="744.00" y="246.37" width="10.80" height="83.63" fill="#E2A33B"/>
+  <rect x="756.00" y="280.86" width="10.80" height="49.14" fill="#E2A33B"/>
+  <rect x="768.00" y="300.61" width="10.80" height="29.39" fill="#E2A33B"/>
+  <rect x="780.00" y="314.99" width="10.80" height="15.02" fill="#E2A33B"/>
+  <rect x="792.00" y="322.81" width="10.80" height="7.19" fill="#E2A33B"/>
+  <rect x="804.00" y="327.09" width="10.80" height="2.91" fill="#E2A33B"/>
+  <rect x="816.00" y="328.18" width="10.80" height="1.82" fill="#E2A33B"/>
+  <rect x="828.00" y="329.45" width="10.80" height="0.55" fill="#E2A33B"/>
+  <rect x="840.00" y="329.82" width="10.80" height="0.18" fill="#E2A33B"/>
+  <rect x="852.00" y="329.91" width="10.80" height="0.09" fill="#E2A33B"/>
+  <line x1="723.1" y1="142" x2="723.1" y2="330" stroke="#171B1A" stroke-width="1" stroke-dasharray="3 3" opacity="0.55"/>
+  <text x="723.1" y="136" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="11" fill="#171B1A" text-anchor="middle" opacity="0.75">0</text>
+  <line x1="552" y1="330" x2="864" y2="330" stroke="#5B6058" stroke-width="1"/>
+  <text x="592.3" y="350" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="11.5" fill="#5B6058" text-anchor="middle">-6</text>
+  <text x="657.7" y="350" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="11.5" fill="#5B6058" text-anchor="middle">-3</text>
+  <text x="723.1" y="350" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="11.5" fill="#5B6058" text-anchor="middle">0</text>
+  <text x="788.6" y="350" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="11.5" fill="#5B6058" text-anchor="middle">3</text>
+  <text x="854.0" y="350" font-family="IBM Plex Mono, ui-monospace, monospace" font-size="11.5" fill="#5B6058" text-anchor="middle">6</text>
+  <text x="36" y="406" font-family="IBM Plex Sans, Arial, sans-serif" font-size="13" fill="#6B4507">Both differences cluster tightly at zero — professional teams are closely matched, which limits how much signal these features carry.</text>
+</svg>

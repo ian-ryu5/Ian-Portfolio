@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="../auth-guard.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NBA points prediction model — Ian Ryu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="nav-inner">
+    <a class="mark" href="../index.html#top"><span class="mark-dot"></span> Ian Ryu</a>
+    <nav class="links">
+      <a href="../index.html#projects">Projects</a>
+      <a href="../about.html">About</a>
+    </nav>
+    <div class="social-links" aria-label="Social links">
+      <a href="mailto:ianryu@outlook.com" aria-label="Email" title="Email"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></a>
+      <a href="https://github.com/ian-ryu5" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.744.084-.729.084-.729 1.205.084 1.838 1.237 1.838 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.775.42-1.305.763-1.605-2.665-.303-5.467-1.334-5.467-5.93 0-1.31.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+      <a href="https://linkedin.com/in/ianryu1" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap project-page" id="top">
+
+  <section class="detail-hero">
+    <a class="breadcrumb" href="../index.html#projects">← Back to all projects</a>
+    <div class="tag-row" style="margin-top:22px;">
+      <span class="tag-domain">Sports analytics / regression</span>
+    </div>
+    <h1 class="detail-title">NBA Points Prediction Model</h1>
+    <p class="detail-role">Independent Project</p>
+    <p class="detail-dates mono">April – May 2026</p>
+    <p class="detail-lede">A probabilistic model predicting how many points the home and away team will each score in an NBA game — a point estimate plus a calibrated uncertainty band, not just a single number.</p>
+  </section>
+
+  <section class="detail-section" style="padding-top:0;">
+    <div class="lede-block">
+      <p>Most sports-prediction projects I'd seen stopped at a single point estimate and called it done. I wanted to build something closer to what an actual forecaster would ship: a prediction that admits how uncertain it is, and is honest when a simpler model beats a fancier one. This was a solo, self-directed project — I picked the problem, sourced and cleaned the data, and made every modeling call myself, specifically to practice the full lifecycle rather than just the model-fitting step.</p>
+      <p style="margin-bottom:0;">I also treated the Ridge Regression baseline as a real competitor, not a formality. When it came out ahead of the Gradient Boosting model on two of the four evaluation metrics, that went in the results section, not a footnote.</p>
+    </div>
+  </section>
+
+  <section class="detail-section">
+    <h2 class="detail-heading">Approach</h2>
+    <ul>
+      <li><strong>Feature engineering</strong> — 5- and 10-game rolling offensive and defensive statistics, computed with a one-game lag so no information from the predicted game leaks in.</li>
+      <li><strong>Model</strong> — two separate Gradient Boosting Regressors, one for home-team points and one for away-team points.</li>
+      <li><strong>Uncertainty</strong> — each team's rolling scoring standard deviation combined with the model's residual error: σ = √(σ_team² + σ_residual²).</li>
+      <li><strong>Validation</strong> — a chronological 80/20 split (train on the past, test on the future), verified to have no date overlap between the two sets.</li>
+      <li><strong>Metrics</strong> — RMSE, MAE, log-likelihood, and coverage of the 90% prediction interval.</li>
+    </ul>
+    <p>The dataset covers 14,746 team-game rows (7,373 games, 33 teams) from December 2020 through March 2026. After requiring sufficient rolling history, 7,289 games and 42 engineered features (21 per team side) remained for modeling.</p>
+
+    <figure class="fig">
+      <img src="images/nba/nba-scoring-distribution.png" alt="Two histograms: distribution of team points scored, and a comparison of home versus away scoring distributions." loading="lazy">
+      <figcaption class="fig-caption">Target distribution — team points skew slightly right of a mean around 113, with home teams scoring about 2 points more on average than away teams.</figcaption>
+    </figure>
+  </section>
+
+  <section class="detail-section">
+    <h2 class="detail-heading">Results</h2>
+    <table class="data-table">
+      <thead>
+        <tr><th>Model</th><th>Side</th><th class="num">RMSE</th><th class="num">MAE</th><th class="num">Log-likelihood</th><th class="num">90% PI coverage</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Ridge baseline</td><td>Home</td><td class="num">12.292</td><td class="num">—</td><td class="num">-3.9308</td><td class="num">—</td></tr>
+        <tr><td>Ridge baseline</td><td>Away</td><td class="num">12.219</td><td class="num">—</td><td class="num">-3.9235</td><td class="num">—</td></tr>
+        <tr><td>Gradient Boosting</td><td>Home</td><td class="num">12.545</td><td class="num">10.060</td><td class="num">-3.9956</td><td class="num">95.0%</td></tr>
+        <tr><td>Gradient Boosting</td><td>Away</td><td class="num">12.441</td><td class="num">9.749</td><td class="num">-3.9911</td><td class="num">94.8%</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">
+      <p class="callout-title">Reading these numbers honestly</p>
+      <p style="margin-bottom:0;">The Ridge Regression baseline actually edges out the final Gradient Boosting model on both RMSE and log-likelihood — the added nonlinear complexity didn't pay for itself on this evaluation. The prediction intervals also ran conservative: a nominal 90% interval covered 94.8–95.0% of actual outcomes, meaning the model is slightly under-confident rather than over-confident. Reporting the baseline comparison plainly, rather than only the model that "sounds more advanced," was a deliberate choice here.</p>
+    </div>
+
+    <figure class="fig">
+      <img src="images/nba/nba-model-evaluation.png" alt="Four panels: predicted versus actual points for home and away teams, and residual histograms with a fitted normal curve for each." loading="lazy">
+      <figcaption class="fig-caption">Predicted vs. actual points and residual distributions on the held-out test set — the wide scatter around the "perfect prediction" line reflects how much of NBA scoring is genuinely hard to predict from team-level rolling stats alone.</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <img src="images/nba/nba-calibration-curve.png" alt="Calibration curve comparing nominal coverage level to empirical coverage for the home and away models, both tracking close to the diagonal." loading="lazy">
+      <figcaption class="fig-caption">Calibration curve — both models sit consistently above the diagonal, confirming the conservative (slightly over-covering) intervals reported above.</figcaption>
+    </figure>
+  </section>
+
+  <section class="detail-section">
+    <h2 class="detail-heading">What The Model Learned</h2>
+    <figure class="fig">
+      <img src="images/nba/nba-feature-importance.png" alt="Two horizontal bar charts of the top 15 features by importance for the home and away scoring models." loading="lazy">
+      <figcaption class="fig-caption">Top 15 features by importance for each model — each side's own recent scoring rate dominates, followed by the opponent's defensive rating and pace.</figcaption>
+    </figure>
+    <figure class="fig">
+      <img src="images/nba/nba-example-predictions.png" alt="Three probability density curves showing predicted point distributions for home and away teams in three example games, with dashed lines marking actual results." loading="lazy">
+      <figcaption class="fig-caption">Predicted scoring distributions for three held-out games, with actual results marked — the model's uncertainty band, not just its point estimate, is the actual output.</figcaption>
+    </figure>
+  </section>
+
+  <section class="detail-section">
+    <h2 class="detail-heading">Limitations</h2>
+    <ul>
+      <li>Assumes roughly normal scoring distributions; NBA scoring may be somewhat skewed, and an alternative distribution could fit better.</li>
+      <li>No player-level data — injuries, lineup changes, and star-player availability aren't represented.</li>
+      <li>Limited opponent-specific context, and no adjustment for back-to-backs or travel fatigue.</li>
+      <li>A single uncertainty calibration is applied across teams, even though volatility likely differs by team.</li>
+    </ul>
+  </section>
+
+  <section class="detail-section">
+    <h2 class="detail-heading">What I'd Do Next</h2>
+    <p>The honest baseline comparison points directly at where the next iteration should go: player-level availability data (the biggest gap called out above), a per-team volatility model instead of one global uncertainty calibration, and testing a non-normal scoring distribution against the current normal assumption. I'd also want to re-run the baseline comparison after those changes — it's entirely possible Ridge keeps winning, and that would be worth knowing too.</p>
+  </section>
+
+  <section class="detail-section">
+    <h2 class="detail-heading">Stack</h2>
+    <div class="tech-row">
+      <span class="tech-tag">Python</span><span class="tech-tag">pandas</span>
+      <span class="tech-tag">scikit-learn</span><span class="tech-tag">Gradient Boosting</span>
+      <span class="tech-tag">Ridge Regression</span>
+    </div>
+  </section>
+
+  <section class="detail-section" style="border-top:1px solid var(--line); padding-top:40px;">
+    <p>Solo project, end to end — data collection and cleaning, feature engineering, both models, uncertainty calibration, and the evaluation write-up above are all mine. Code and notebooks are on GitHub.</p>
+    <div class="detail-footer-actions">
+      <a class="btn btn-primary" href="../index.html#projects">← Return Home</a>
+    </div>
+  </section>
+
+</div>
+
+<footer></footer>
+
+<a class="to-top mono" href="#top" id="toTop" aria-label="Back to top">↑</a>
+<script>
+  var toTop = document.getElementById('toTop');
+  window.addEventListener('scroll', function(){
+    if (window.scrollY > 500) { toTop.classList.add('visible'); }
+    else { toTop.classList.remove('visible'); }
+  });
+
+  requestAnimationFrame(function(){ document.body.classList.add('page-loaded'); });
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reducedMotion) {
+    document.addEventListener('click', function(e){
+      var a = e.target.closest('a');
+      if (!a) return;
+      var href = a.getAttribute('href');
+      if (!href || href.charAt(0) === '#' || a.target === '_blank' || href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0 || e.metaKey || e.ctrlKey) return;
+      e.preventDefault();
+      document.body.classList.remove('page-loaded');
+      setTimeout(function(){ window.location.href = href; }, 300);
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" role="img" aria-labelledby="title desc">
+  <title id="title">Rows retained after transition removal</title>
+  <desc id="desc">Aggregate row counts before and after transition removal for healthy, stroke, and combined configurations.</desc>
+  <rect width="900" height="420" fill="#FBFCF9"/>
+  <g font-family="IBM Plex Sans, Arial, sans-serif" fill="#171B1A">
+    <text x="45" y="48" font-size="22" font-weight="600">Transition Removal</text>
+    <text x="45" y="74" font-size="13.5" fill="#5B6058">Removing unlabeled movement segments before windowing</text>
+  </g>
+
+  <!-- Legend -->
+  <g font-family="IBM Plex Mono, monospace" font-size="11.5" fill="#5B6058">
+    <rect x="560" y="42" width="14" height="14" rx="2" fill="#DBDDD4"/>
+    <text x="582" y="54">Before removal</text>
+    <rect x="710" y="42" width="14" height="14" rx="2" fill="#3E7C74"/>
+    <text x="732" y="54" fill="#1E3D38" font-weight="500">Retained</text>
+  </g>
+
+  <!-- Grid lines -->
+  <g stroke="#E8EAE2" stroke-width="1" stroke-dasharray="3 3">
+    <line x1="265" y1="105" x2="265" y2="340"/>
+    <line x1="395" y1="105" x2="395" y2="340"/>
+    <line x1="525" y1="105" x2="525" y2="340"/>
+    <line x1="655" y1="105" x2="655" y2="340"/>
+  </g>
+
+  <!-- Axes -->
+  <g stroke="#DBDDD4" stroke-width="1">
+    <line x1="135" y1="105" x2="135" y2="340"/>
+    <line x1="135" y1="340" x2="840" y2="340"/>
+  </g>
+
+  <!-- X-Axis Labels -->
+  <g font-family="IBM Plex Mono, monospace" font-size="11.5" fill="#5B6058" text-anchor="middle">
+    <text x="135" y="360">0</text>
+    <text x="265" y="360">1M</text>
+    <text x="395" y="360">2M</text>
+    <text x="525" y="360">3M</text>
+    <text x="655" y="360">4M</text>
+  </g>
+
+  <!-- Category Labels on Left -->
+  <g font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#171B1A">
+    <text x="45" y="146" font-weight="500">Healthy</text>
+    <text x="45" y="222" font-weight="500">Stroke</text>
+    <text x="45" y="298" font-weight="500">Combined</text>
+  </g>
+
+  <!-- Bars (Before: #DBDDD4, After: #3E7C74) -->
+  <g>
+    <!-- Healthy -->
+    <rect x="135" y="123" width="246" height="20" rx="3" fill="#DBDDD4"/>
+    <rect x="135" y="147" width="181" height="20" rx="3" fill="#3E7C74"/>
+
+    <!-- Stroke -->
+    <rect x="135" y="199" width="270" height="20" rx="3" fill="#DBDDD4"/>
+    <rect x="135" y="223" width="206" height="20" rx="3" fill="#3E7C74"/>
+
+    <!-- Combined -->
+    <rect x="135" y="275" width="516" height="20" rx="3" fill="#DBDDD4"/>
+    <rect x="135" y="299" width="387" height="20" rx="3" fill="#3E7C74"/>
+  </g>
+
+  <!-- Data Value Labels -->
+  <g font-family="IBM Plex Mono, monospace" font-size="11.5">
+    <!-- Healthy -->
+    <text x="390" y="137" fill="#5B6058">1,891,710 before</text>
+    <text x="325" y="161" fill="#1E3D38" font-weight="500">1,391,040 after</text>
+
+    <!-- Stroke -->
+    <text x="414" y="213" fill="#5B6058">2,073,870 before</text>
+    <text x="350" y="237" fill="#1E3D38" font-weight="500">1,583,370 after</text>
+
+    <!-- Combined -->
+    <text x="660" y="289" fill="#5B6058">3,965,580 before</text>
+    <text x="531" y="313" fill="#1E3D38" font-weight="500">2,974,410 after</text>
+  </g>
+
+  <!-- Summary Footer -->
+  <g font-family="IBM Plex Sans, Arial, sans-serif" font-size="12.5" fill="#6B4507">
+    <text x="45" y="395">Removed: 26.5% healthy · 23.7% stroke · 25.0% combined</text>
+  </g>
+</svg>
