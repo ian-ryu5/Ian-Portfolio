@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Ian Ryu — Portfolio Access</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  /* styles.css fades pages in via a .page-loaded class added by each page's
+     script. The login page has no such script, so opt out of the fade. */
+  body{opacity:1;}
+  .login-wrap{
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    padding:32px;
+  }
+  .login-card{
+    width:100%; max-width:420px;
+    background:var(--paper-raised); border:1px solid var(--line);
+    border-radius:14px; padding:38px 34px 32px;
+  }
+  .login-mark{
+    display:flex; align-items:center; gap:9px;
+    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:16px;
+    margin-bottom:26px;
+  }
+  .login-mark .mark-dot{width:8px; height:8px; border-radius:50%; background:var(--amber); flex:none;}
+  h1.login-title{
+    font-family:'Space Grotesk', sans-serif; font-size:26px; font-weight:600;
+    margin:0 0 10px; letter-spacing:-.01em;
+  }
+  p.login-sub{color:var(--muted); font-size:14.5px; margin:0 0 26px;}
+  label.login-label{
+    display:block; font-family:'IBM Plex Mono', monospace; font-size:11.5px;
+    letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+  }
+  input.login-input{
+    width:100%; padding:12px 14px; border-radius:7px;
+    border:1px solid var(--line); background:var(--paper);
+    font-family:'IBM Plex Sans', sans-serif; font-size:15px; color:var(--ink);
+    transition:border-color .15s ease;
+  }
+  input.login-input:focus{outline:none; border-color:var(--teal);}
+  input.login-input.error{border-color:#B3402F;}
+  .login-actions{margin-top:20px;}
+  .login-actions .btn{width:100%; justify-content:center;}
+  p.login-error{
+    color:#B3402F; font-size:13.5px; margin:14px 0 0; min-height:19px;
+  }
+  p.login-note{
+    color:var(--muted); font-size:12px; margin:24px 0 0;
+    padding-top:18px; border-top:1px solid var(--line);
+  }
+</style>
+</head>
+<body>
+
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-mark"><span class="mark-dot"></span> Ian Ryu</div>
+    <h1 class="login-title">Portfolio Access</h1>
+    <p class="login-sub">This portfolio is shared privately. Enter the password to continue.</p>
+
+    <label class="login-label" for="pw">Password</label>
+    <input class="login-input" type="password" id="pw" autocomplete="current-password"
+           autofocus aria-describedby="err">
+
+    <div class="login-actions">
+      <button class="btn btn-primary" id="go" type="button">Enter</button>
+    </div>
+
+    <p class="login-error" id="err" role="alert"></p>
+
+    <p class="login-note">If you were sent here by mistake, or you need the password,
+      email <a class="link" href="mailto:ianryu@outlook.com">ianryu@outlook.com</a>.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  var SESSION_KEY = 'ianryu_portfolio_unlocked';
+  var REDIRECT_KEY = 'ianryu_portfolio_redirect';
+
+  // SHA-256 of the access password. Stored hashed so the password is not
+  // sitting in plain text in the page source. See auth.js for the caveats:
+  // this is a soft gate, not real security.
+  var PASSWORD_HASH =
+    '761d1f27b1b2df5b4d99409107b191b1e6d79a7e9c7bcc4330e1bb8722404e8d';
+
+  var input = document.getElementById('pw');
+  var button = document.getElementById('go');
+  var errorEl = document.getElementById('err');
+
+  // Already unlocked? Skip straight through.
+  try {
+    if (sessionStorage.getItem(SESSION_KEY) === '1') { go(); return; }
+  } catch (e) { /* ignore */ }
+
+  function toHex(buffer) {
+    return Array.prototype.map
+      .call(new Uint8Array(buffer), function (b) {
+        return ('00' + b.toString(16)).slice(-2);
+      })
+      .join('');
+  }
+
+  function go() {
+    var dest = 'index.html';
+    try {
+      var saved = sessionStorage.getItem(REDIRECT_KEY);
+      // only accept same-site relative paths
+      if (saved && !/^([a-z]+:)?\/\//i.test(saved)) { dest = saved; }
+      sessionStorage.removeItem(REDIRECT_KEY);
+    } catch (e) { /* ignore */ }
+    window.location.replace(dest);
+  }
+
+  function fail(message) {
+    errorEl.textContent = message;
+    input.classList.add('error');
+    input.value = '';
+    input.focus();
+  }
+
+  function submit() {
+    var value = input.value;
+    if (!value) { fail('Please enter the password.'); return; }
+
+    if (!window.crypto || !window.crypto.subtle) {
+      fail('This browser cannot verify the password. Try a different browser.');
+      return;
+    }
+
+    window.crypto.subtle
+      .digest('SHA-256', new TextEncoder().encode(value))
+      .then(function (buf) {
+        if (toHex(buf) === PASSWORD_HASH) {
+          try { sessionStorage.setItem(SESSION_KEY, '1'); } catch (e) { /* ignore */ }
+          go();
+        } else {
+          fail('That password is not correct.');
+        }
+      })
+      .catch(function () {
+        fail('Something went wrong. Please try again.');
+      });
+  }
+
+  button.addEventListener('click', submit);
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { submit(); }
+  });
+  input.addEventListener('input', function () {
+    input.classList.remove('error');
+    errorEl.textContent = '';
+  });
+})();
+</script>
+
+</body>
+</html>
