@@ -214,6 +214,17 @@ p.card-desc{color:var(--muted); font-size:15px; margin:0 0 20px; max-width:64ch;
 .exp-meta{font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:var(--muted);}
 .exp-role{font-weight:600; color:var(--ink); font-family:'IBM Plex Sans', sans-serif; font-size:15px; margin-top:4px;}
 .exp-body p{margin:0 0 6px; color:var(--muted); font-size:14.5px; max-width:62ch;}
+.exp-bullets{list-style:none; margin:0; padding:0;}
+.exp-bullets li{
+  position:relative; padding-left:20px; margin:0 0 9px;
+  color:var(--muted); font-size:14.5px; max-width:62ch;
+}
+.exp-bullets li:last-child{margin-bottom:0;}
+/* amber dot, matching the nav mark and the metric flags elsewhere on the site */
+.exp-bullets li::before{
+  content:''; position:absolute; left:2px; top:9px;
+  width:6px; height:6px; border-radius:50%; background:var(--amber);
+}
 @media (max-width:700px){ .exp-item{grid-template-columns:1fr;} }
 
 /* ---------- about ---------- */
